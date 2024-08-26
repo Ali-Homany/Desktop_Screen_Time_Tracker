@@ -1,37 +1,60 @@
 import win32gui
+import win32process
+import wmi
 import time
 import csv
+import os
+from datetime import datetime
+
+c = wmi.WMI()
+
+def get_active_window_info():
+    try:
+        hwnd = win32gui.GetForegroundWindow()
+        _, pid = win32process.GetWindowThreadProcessId(hwnd)
+        for process in c.Win32_Process(ProcessId=pid):
+            app_name = process.Name.replace('.exe', '').capitalize()
+            if process.Name.lower() == 'code.exe':
+                app_name = 'Visual Studio Code'
+            return {
+                'title': win32gui.GetWindowText(hwnd),
+                'app_name': app_name,
+                'exe_path': process.ExecutablePath
+            }
+    except Exception as e:
+        log(f"Error getting window info: {e}")
+        return {'title': 'Unknown', 'app_name': 'Unknown', 'exe_path': 'Unknown'}
 
 
-def get_active_window_title():
-    hwnd = win32gui.GetForegroundWindow()
-    title = win32gui.GetWindowText(hwnd)
-    return title
-
-
-def extract_app_name(title):
-    # Remove the window title from the window text
-    if '-' in title:
-        app_name = title.split(' - ')[-1]
-    elif '\\' in title:
-        app_name = 'File Explorer'
-    else:
-        app_name = title
-    return app_name
-
-
-def record_active_window(interval=1):
+def record_active_window():
     timestamp = time.time()
-    title = get_active_window_title()
-    app_name = extract_app_name(title)
-    with open('active_apps_log.csv', 'a', newline='') as csvfile:
-        fieldnames = ['timestamp', 'title', 'app_name']
+    window_info = get_active_window_info()
+    
+    file_exists = os.path.exists('active_apps_log.csv')
+    
+    with open('active_apps_log.csv', 'a', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['timestamp', 'title', 'app_name', 'exe_path']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        if csvfile.tell() == 0:
+        if not file_exists:
             writer.writeheader()
-        writer.writerow({'timestamp': timestamp, 'title': title, 'app_name': app_name})
+        writer.writerow({
+            'timestamp': timestamp,
+            'title': window_info['title'],
+            'app_name': window_info['app_name'],
+            'exe_path': window_info['exe_path']
+        })
+
+
+def log(e):
+    # save to log file
+    with open('error_log.txt', 'a') as f:
+        f.write(f'{datetime.now()}: {e}\n')
+
 
 if __name__ == '__main__':
     while True:
-        record_active_window()
+        try:
+            record_active_window()
+        except Exception as e:
+            log(e)
         time.sleep(1)

@@ -26,21 +26,30 @@ def seconds_to_time(seconds: int) -> str:
 
 
 def get_usage_by_apps(date: datetime) -> pd.DataFrame:
+    """
+    Get the usage counts for all apps at a given date
+    Args:
+        date (datetime): The date to get the usage counts for
+    Returns:
+        pd.DataFrame: A DataFrame with the app names and the usage counts in minutes
+    """
     df = usage_at_date(date)
     app_counts = df['app_name'].value_counts()
     app_counts = app_counts.reset_index(name='usage')
+    app_counts['usage'] = app_counts['usage'] // 60
+    app_counts = app_counts[app_counts['usage'] > 0]
     return app_counts
 
 
 def get_unique_days() -> pd.DataFrame:
-    df = pd.read_csv(csv_file_path)
+    df = pd.read_csv(csv_file_path, encoding='utf-8')
     df['date'] = pd.to_datetime(df['timestamp'], unit='s').dt.date
     result = df['date'].unique()
     return result
 
 
 def get_daily_usage() -> pd.DataFrame:
-    df = pd.read_csv(csv_file_path)
+    df = pd.read_csv(csv_file_path, encoding='utf-8')
     df['date'] = pd.to_datetime(df['timestamp'], unit='s').dt.date
     result = df['date'].value_counts()
     result = result.reset_index(name='usage')
@@ -48,7 +57,7 @@ def get_daily_usage() -> pd.DataFrame:
 
 
 def usage_at_date(date: datetime) -> pd.DataFrame:
-    df = pd.read_csv(csv_file_path)
+    df = pd.read_csv(csv_file_path, encoding='utf-8')
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
     df.set_index('timestamp', inplace=True)
     return df.loc[date]
