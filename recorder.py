@@ -8,7 +8,7 @@ from datetime import datetime
 
 c = wmi.WMI()
 
-def get_active_window_info():
+def get_active_window_info() -> dict:
     try:
         hwnd = win32gui.GetForegroundWindow()
         _, pid = win32process.GetWindowThreadProcessId(hwnd)
@@ -26,7 +26,7 @@ def get_active_window_info():
         return {'title': 'Unknown', 'app_name': 'Unknown', 'exe_path': 'Unknown'}
 
 
-def record_active_window():
+def record_active_window() -> None:
     timestamp = time.time()
     window_info = get_active_window_info()
     
@@ -45,7 +45,7 @@ def record_active_window():
         })
 
 
-def log(e):
+def log(e: Exception) -> None:
     # save to log file
     with open('error_log.txt', 'a') as f:
         f.write(f'{datetime.now()}: {e}\n')

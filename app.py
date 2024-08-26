@@ -16,7 +16,7 @@ unique_days = get_unique_days()
 
 
 # Function to aggregate data and format the date column
-def aggregate_data(df, level):
+def aggregate_data(df: pd.DataFrame, level: str) -> pd.DataFrame:
     if level == 'Daily':
         df['formatted_date'] = df['date'].dt.strftime('%Y-%m-%d')
     elif level == 'Monthly':
@@ -116,4 +116,4 @@ def update_app_usage(selected_day):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server()

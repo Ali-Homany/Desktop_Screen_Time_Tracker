@@ -3,3 +3,6 @@ win32gui
 matplotlib
 plotly
 dash
+pywin32
+wmi
+pyinstaller
