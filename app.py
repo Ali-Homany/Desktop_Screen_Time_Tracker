@@ -1,3 +1,4 @@
+import os
 import dash
 from dash import dcc, html
 import pandas as pd
@@ -7,12 +8,9 @@ import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 
 # Initialize the Dash app
-app = dash.Dash(__name__)
-
-# Load the initial data
-df = get_daily_usage()
-df['date'] = pd.to_datetime(df['date'])
-unique_days = get_unique_days()
+base_dir = os.path.dirname(os.path.realpath(__file__))
+assets_path = os.path.join(base_dir, 'assets')
+app = dash.Dash(__name__, assets_folder=assets_path)
 
 
 # Function to aggregate data and format the date column
@@ -35,7 +33,7 @@ app.layout = html.Div(children=[
     html.H2('Select a Day to View App Usage'),
     dcc.Dropdown(
         id='day-selection',
-        options=[{'label': day, 'value': day} for day in unique_days],
+        options=[{'label': day, 'value': day} for day in get_unique_days()],
         placeholder='Select a day',
     ),
     # Total Hours in selected date
@@ -66,7 +64,7 @@ app.layout = html.Div(children=[
             {'label': 'Monthly', 'value': 'Monthly'},
             {'label': 'Yearly', 'value': 'Yearly'}
         ],
-        value='Monthly',
+        value='Daily',
         labelStyle={'display': 'inline-block'}
     ),
     # Main usage graph
@@ -93,7 +91,8 @@ app.layout = html.Div(children=[
     [Input('aggregation-level', 'value')]
 )
 def update_graph(selected_level):
-    aggregated_df = aggregate_data(df.copy(deep=True), selected_level)
+    df = get_daily_usage()
+    aggregated_df = aggregate_data(df, selected_level)
     fig = px.bar(aggregated_df, x='formatted_date', y='usage', title=f'{selected_level} Screen Time Usage')
     fig = go.Figure(data=[
         go.Bar(
@@ -144,4 +143,6 @@ def update_total_hours(selected_day):
 
 
 if __name__ == '__main__':
-    app.run_server()
+    import webbrowser
+    webbrowser.open('http://127.0.0.1:8050/')
+    app.run()

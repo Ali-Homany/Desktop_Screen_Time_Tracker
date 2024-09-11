@@ -1,10 +1,11 @@
 import pandas as pd
 from datetime import datetime
-import matplotlib.pyplot as plt
+import os
 
+# CSV file directory in Documents
+documents_dir = os.path.join(os.path.expanduser('~'), 'Documents', 'ScreenTimeTracker')
+CSV_FILE_PATH = os.path.join(documents_dir, 'active_apps_log.csv')
 
-
-csv_file_path = 'active_apps_log.csv'
 def seconds_to_time(seconds: int) -> str:
     hours = seconds // 3600
     minutes = (seconds % 3600) // 60
@@ -40,30 +41,35 @@ def get_usage_by_apps(date: datetime) -> pd.DataFrame:
     app_counts = app_counts[app_counts['usage'] > 0]
     return app_counts
 
+def read_data() -> pd.DataFrame:
+    if not os.path.exists(CSV_FILE_PATH):
+        os.makedirs(os.path.dirname(CSV_FILE_PATH), exist_ok=True)
+        pd.DataFrame(columns=['timestamp', 'title', 'app_name', 'exe_path']).to_csv(CSV_FILE_PATH, index=False)
+    return pd.read_csv(CSV_FILE_PATH, encoding='utf-8')
 
 def get_unique_days() -> pd.DataFrame:
-    df = pd.read_csv(csv_file_path, encoding='utf-8')
+    df = read_data()
     df['date'] = pd.to_datetime(df['timestamp'], unit='s').dt.date
     result = df['date'].unique()
     return result
 
 
 def get_daily_usage() -> pd.DataFrame:
-    df = pd.read_csv(csv_file_path, encoding='utf-8')
+    df = read_data()
     df['date'] = pd.to_datetime(df['timestamp'], unit='s').dt.date
     result = df['date'].value_counts()
     result = result.reset_index(name='usage')
+    result['date'] = pd.to_datetime(result['date'])
     return result
 
 
 def usage_at_date(date: datetime) -> pd.DataFrame:
-    df = pd.read_csv(csv_file_path, encoding='utf-8')
+    df = read_data()
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
     df.set_index('timestamp', inplace=True)
     return df.loc[date]
 
 
 if __name__ == '__main__':
-    csv_file_path = 'active_apps_log.csv'
-    df = get_daily_usage(csv_file_path)
+    df = get_daily_usage()
     print(df)
