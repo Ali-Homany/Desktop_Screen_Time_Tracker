@@ -5,7 +5,7 @@ Simple python screen time tracker for windows desktop.
 ### 1. Recorder
 Uses win32gui library to record the active window every second
 
-Includes 3 methods:
+Includes following methods:
 - get_active_window_info
 - record_active_window
 - log
@@ -13,36 +13,74 @@ Includes 3 methods:
 ### 2. Summarizer
 Reads the records file & does necessary transformation.
 
-Includes 4 methods:
-- group_by_app
+Includes following methods:
+- get_usage_by_apps
+- read_data
+- get_unique_days
 - get_daily_usage
 - usage_at_date
 - seconds_to_time
 
 ### 3. App
 Builds a simple Dash webapp that displays the screen time (for now) daily/monthly/yearly.
+Screenshots of the dashboard:
+<br>
 
-# Usage
+<p align="center">
+  <img src="./dashboard1.png" alt="App Usage Dashboard" width="400"/>
+  <img src="./dashboard2.png" alt="Daily Usage Dashboard" width="400"/>
+</p>
+
+## To Do:
+- Set default value of App Usage Graph to today
+- Make tracking more efficient:
+    - Summarize old days into hourly app usage data only (each 86,400 rows -> number of apps * 24)
+    - Save data in normalized form (saves alot of space instead of repeating apps names for e.g)
+    - Insert records as batches (keep 30s in-memory)
+    - Increment app's usage by date instead of recording every second (so data recorded is already summarized)
+- Improve Dashboard Design
+- Use db (sqlalchemy) instead of csv
+- Add export option to export data to csv or excel
+- Add app icons to dashboard
+
+These are just some ideas to be done soon, surely on the long-run many features could be added. Don't hesitate to share any suggestions!
+
+## Usage
+For the ready-to-use application, download the executable setup file from the latest release, [here](https://github.com/homanydata/Desktop_Screen_Time_Tracker/releases/tag/v0.1.0). Run it and follow the instructions within the installer.
+
+To try the code yourself, you can do the following:
+
 1. Clone the repo
-```
-git clone https://github.com/yourusername/Desktop_Screen_Time_Tracker.git
-```
+    ```
+    git clone https://github.com/yourusername/Desktop_Screen_Time_Tracker.git
+    ```
 2. Install the requirements
-```
-pip install -r requirements.txt
-```
+    ```
+    pip install -r requirements.txt
+    ```
 3. Create executables
-```
-pyinstaller --onefile --noconsole recorder.py
-```
-```
-pyinstaller --onefile app.py
-```
-You will find the exectuables in the dist folder. Make sure to move the recorder.exe and app.exe to the root directory of the repository.
+
+    Run the following commands in the command line (in the project directory)
+    ```
+    pyinstaller --onefile --noconsole recorder.py
+    ```
+    ```
+    pyinstaller --onefile app.py
+    ```
+    You will find the exectuables in the dist folder. Make sure to move the recorder.exe and app.exe to the root directory of the repository.
 
 4. Create a shortcut for the recorder.exe
 
-5. Move the shortcut to the `C:\Users\Admiin\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\`. Now the recorder will run on startup and log the screen time to the active_apps_log.csv file.
+5. Run Recorder on Startup:
+
+    Move the shortcut to the `C:\Users\Admiin\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\`.
+    
+    Now the recorder will run on startup and log the screen time to the active_apps_log.csv file.
 
 6. Run the app.exe to view the screen time.
-You can view the screen time by going to http://127.0.0.1:8050/ on your browser.
+
+<br><br>
+## Get Involved!
+If you're interested in contributing to or participating in this project, welcome! 😊
+
+"Desktop_Screen_Time_Tracker" is a simple, fun, and casual project designed to help track your screen time on desktop, just a side project for learning and experimenting!
