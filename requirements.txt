@@ -6,3 +6,4 @@ dash
 pywin32
 wmi
 pyinstaller
+sqlalchemy

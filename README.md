@@ -2,7 +2,15 @@
 Simple python screen time tracker for windows desktop.
 
 ## Components:
-### 1. Recorder
+### 1. DB
+Creates database schema using SQLAlchemy, and provides necessary methods to interact with the database:
+- create_db
+- get_all_records
+- add_record
+- is_transformation_needed
+- transform_new_data
+
+### 2. Recorder
 Uses win32gui library to record the active window every second
 
 Includes following methods:
@@ -10,18 +18,16 @@ Includes following methods:
 - record_active_window
 - log
 
-### 2. Summarizer
+### 3. Summarizer
 Reads the records file & does necessary transformation.
 
 Includes following methods:
+- seconds_to_time
 - get_usage_by_apps
-- read_data
 - get_unique_days
 - get_daily_usage
-- usage_at_date
-- seconds_to_time
 
-### 3. App
+### 4. App
 Builds a simple Dash webapp that displays the screen time (for now) daily/monthly/yearly.
 Screenshots of the dashboard:
 <br>
@@ -32,26 +38,16 @@ Screenshots of the dashboard:
 </p>
 
 ## To Do:
-<div style="margin-left: 2em;">
-    <input type="checkbox" disabled checked> Set default value of App Usage Graph to today
-    <br>
-    <input type="checkbox" disabled checked> Make tracking more efficient:
-        <br>
-        <div style="margin-left: 4em;">
-            <input type="checkbox" disabled checked> Save data in normalized form (saves alot of space instead of repeating apps names for e.g)
-            <br>
-            <input type="checkbox" disabled checked> Insert records as batches (keep 30s in-memory) to reduce I/O
-            <br>
-            <input type="checkbox" disabled checked> Use db (sqlalchemy) instead of csv
-            <br>
-            <input type="checkbox" disabled checked> Summarize old days into hourly app usage data only (each 86,400 rows -> number of apps * 24)
-        </div>
-    <input type="checkbox" disabled> Improve Dashboard Design
-    <br>
-    <input type="checkbox" disabled> Add export option to export data to csv or excel
-    <br>
-    <input type="checkbox" disabled> Add app icons to dashboard
-</div>
+- ~~Set default value of App Usage Graph to today~~
+- ~~Make tracking more efficient:~~
+    - ~~Use db (sqlalchemy) instead of csv~~
+    - ~~Save data in normalized form (saves alot of space instead of repeating apps names for e.g)~~
+    - ~~Insert records as batches (keep 30s in-memory) to reduce I/O~~
+    - ~~Summarize old days into hourly app usage data only (each 86,400 rows -> number of apps * 24)~~
+- Improve Dashboard Design
+- Add export option to export data to csv or excel
+- Add app icons to dashboard
+
 These are just some ideas to be done soon, surely on the long-run many features could be added. Don't hesitate to share any suggestions!
 
 ## Usage
