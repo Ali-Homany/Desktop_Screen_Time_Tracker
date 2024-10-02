@@ -2,18 +2,15 @@ import win32gui
 import win32process
 import wmi
 import time
-import csv
 import os
 from datetime import datetime
+from db import add_record
 
 
 # Error log directory in AppData\Roaming
-appdata_dir = os.path.join(os.getenv('APPDATA'), 'ScreenTimeTracker')
+appdata_dir = os.path.join(os.getenv('APPDATA'), 'Screen_Time_Tracker')
+os.makedirs(appdata_dir, exist_ok=True)
 ERROR_LOG_PATH = os.path.join(appdata_dir, 'error_log.txt')
-
-# CSV file directory in Documents
-documents_dir = os.path.join(os.path.expanduser('~'), 'Documents', 'ScreenTimeTracker')
-CSV_FILE_PATH = os.path.join(documents_dir, 'active_apps_log.csv')
 
 c = wmi.WMI()
 
@@ -35,26 +32,18 @@ def get_active_window_info() -> dict:
         return {'title': 'Unknown', 'app_name': 'Unknown', 'exe_path': 'Unknown'}
 
 
+batch_size = 30
+batch_records = []
+
 def record_active_window() -> None:
-    timestamp = time.time()
+    global batch_records
     window_info = get_active_window_info()
-    
-    # create csv file if it doesnt exist
-    if not os.path.exists(CSV_FILE_PATH):
-        os.makedirs(os.path.dirname(CSV_FILE_PATH), exist_ok=True)
-        with open(CSV_FILE_PATH, 'w', newline='', encoding='utf-8') as csvfile:
-            fieldnames = ['timestamp', 'title', 'app_name', 'exe_path']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            writer.writeheader()
-    with open(CSV_FILE_PATH, 'a', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['timestamp', 'title', 'app_name', 'exe_path']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writerow({
-            'timestamp': timestamp,
-            'title': window_info['title'],
-            'app_name': window_info['app_name'],
-            'exe_path': window_info['exe_path']
-        })
+    window_info['timestamp'] = int(time.time())
+    batch_records.append(window_info)
+    if len(batch_records) >= batch_size or time.time() - batch_records[0]['timestamp'] >= batch_size:
+        for record in batch_records:
+            add_record(record['app_name'], record['exe_path'], record['timestamp'])
+        batch_records = []
 
 
 def log(e: Exception) -> None:
@@ -65,9 +54,11 @@ def log(e: Exception) -> None:
         f.write(f'{datetime.now()}: {e}\n')
 
 if __name__ == '__main__':
+    last_recorded = time.time()
     while True:
         try:
             record_active_window()
+            last_recorded = time.time()
         except Exception as e:
             log(e)
-        time.sleep(1)
+        time.sleep(max(0, 1 - (time.time() - last_recorded)))

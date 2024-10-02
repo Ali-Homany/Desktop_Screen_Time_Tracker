@@ -32,17 +32,26 @@ Screenshots of the dashboard:
 </p>
 
 ## To Do:
-- Set default value of App Usage Graph to today
-- Make tracking more efficient:
-    - Summarize old days into hourly app usage data only (each 86,400 rows -> number of apps * 24)
-    - Save data in normalized form (saves alot of space instead of repeating apps names for e.g)
-    - Insert records as batches (keep 30s in-memory)
-    - Increment app's usage by date instead of recording every second (so data recorded is already summarized)
-- Improve Dashboard Design
-- Use db (sqlalchemy) instead of csv
-- Add export option to export data to csv or excel
-- Add app icons to dashboard
-
+<div style="margin-left: 2em;">
+    <input type="checkbox" disabled checked> Set default value of App Usage Graph to today
+    <br>
+    <input type="checkbox" disabled checked> Make tracking more efficient:
+        <br>
+        <div style="margin-left: 4em;">
+            <input type="checkbox" disabled checked> Save data in normalized form (saves alot of space instead of repeating apps names for e.g)
+            <br>
+            <input type="checkbox" disabled checked> Insert records as batches (keep 30s in-memory) to reduce I/O
+            <br>
+            <input type="checkbox" disabled checked> Use db (sqlalchemy) instead of csv
+            <br>
+            <input type="checkbox" disabled checked> Summarize old days into hourly app usage data only (each 86,400 rows -> number of apps * 24)
+        </div>
+    <input type="checkbox" disabled> Improve Dashboard Design
+    <br>
+    <input type="checkbox" disabled> Add export option to export data to csv or excel
+    <br>
+    <input type="checkbox" disabled> Add app icons to dashboard
+</div>
 These are just some ideas to be done soon, surely on the long-run many features could be added. Don't hesitate to share any suggestions!
 
 ## Usage
