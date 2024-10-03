@@ -108,11 +108,10 @@ def transform_new_data() -> None:
             session.add(new_hourly_record)
     # truncate Records
     session.query(Record).delete()
-    # refresh
-    session.execute(text('VACUUM'))
     # commit
     session.commit()
     session.close()
-
-if __name__ == '__main__':
-    transform_new_data()
+    # refresh
+    engine = create_engine(DB_PATH)
+    with engine.connect() as connection:
+        connection.execute(text("VACUUM"))

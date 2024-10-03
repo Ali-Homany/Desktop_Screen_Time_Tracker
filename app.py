@@ -12,24 +12,9 @@ from db import is_transformation_needed, transform_new_data
 # Initialize the Dash app
 base_dir = os.path.dirname(os.path.realpath(__file__))
 app = dash.Dash(__name__)
+if is_transformation_needed():
+    transform_new_data()
 
-
-# Layout with a hidden store and other components
-app.layout = html.Div([
-    dcc.Store(id='db-ready-store', storage_type='memory'),  # Hidden store
-    dcc.Interval(id='startup-trigger', interval=1*1000, n_intervals=0),
-    html.Div(id='other-output')  # Output of another callback
-])
-
-# Callback to prepare the database on app start or refresh
-@app.callback(
-    Output('db-ready-store', 'data'),
-    Input('startup-trigger', 'n_intervals')
-)
-def initialize_db(n_intervals):
-    if n_intervals != 0 and is_transformation_needed():
-        transform_new_data()
-    return
 
 # Function to aggregate data and format the date column
 def aggregate_data(df: pd.DataFrame, level: str) -> pd.DataFrame:

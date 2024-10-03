@@ -19,13 +19,15 @@ def get_active_window_info() -> dict:
         hwnd = win32gui.GetForegroundWindow()
         _, pid = win32process.GetWindowThreadProcessId(hwnd)
         for process in c.Win32_Process(ProcessId=pid):
+            if not process:
+                return {'title': 'Unknown', 'app_name': 'Unknown', 'exe_path': 'Unknown'}
             app_name = process.Name.replace('.exe', '').capitalize()
             if process.Name.lower() == 'code.exe':
                 app_name = 'Visual Studio Code'
             return {
                 'title': win32gui.GetWindowText(hwnd),
-                'app_name': app_name,
-                'exe_path': process.ExecutablePath
+                'app_name': app_name or 'Unknown',
+                'exe_path': process.ExecutablePath or 'Unknown'
             }
     except Exception as e:
         log(f"Error getting window info: {e}")
