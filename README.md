@@ -7,6 +7,8 @@ Creates database schema using SQLAlchemy, and provides necessary methods to inte
 - create_db
 - get_all_records
 - add_record
+- get_all_apps_names
+- update_app_icon
 - is_transformation_needed
 - transform_new_data
 
@@ -28,7 +30,7 @@ Includes following methods:
 - get_daily_usage
 
 ### 4. App
-Builds a simple Dash webapp that displays the screen time (for now) daily/monthly/yearly.
+Builds a simple Flask webapp that displays the screen time (for now) daily/monthly/yearly.
 Screenshots of the dashboard:
 <br>
 
@@ -46,7 +48,9 @@ Screenshots of the dashboard:
     - ~~Summarize old days into hourly app usage data only (each 86,400 rows -> number of apps * 24)~~
 - Improve Dashboard Design
 - Add export option to export data to csv or excel
-- Add app icons to dashboard
+- ~~Add app icons to dashboard~~
+- ~~Migrate to Flask~~
+- Auto-Refresh Dashboard (auto-transform actually)
 
 These are just some ideas to be done soon, surely on the long-run many features could be added. Don't hesitate to share any suggestions!
 

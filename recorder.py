@@ -4,13 +4,17 @@ import wmi
 import time
 import os
 from datetime import datetime
-from db import add_record
+from db import add_record, get_all_apps_names, update_app_icon
+from icon_extractor import extract_icon
+import threading
 
 
 # Error log directory in AppData\Roaming
 appdata_dir = os.path.join(os.getenv('APPDATA'), 'Screen_Time_Tracker')
 os.makedirs(appdata_dir, exist_ok=True)
 ERROR_LOG_PATH = os.path.join(appdata_dir, 'error_log.txt')
+icons_dir = os.path.join(os.path.expanduser('~'), 'Documents', 'Screen_Time_Tracker', 'Icons')
+os.makedirs(icons_dir, exist_ok=True)
 
 c = wmi.WMI()
 
@@ -33,15 +37,30 @@ def get_active_window_info() -> dict:
         log(f"Error getting window info: {e}")
         return {'title': 'Unknown', 'app_name': 'Unknown', 'exe_path': 'Unknown'}
 
+def save_app_icon(app_info: dict) -> None:
+    try:
+        icon_path = extract_icon(app_info['app_name'], app_info['exe_path'], icons_dir)
+    except Exception as e:
+        log(f"Error extracting icon: {e}")
+        icon_path = 'Unknown'
+    # update app record adding the icon
+    update_app_icon(app_info['app_name'], icon_path, app_info['exe_path'])
 
 batch_size = 30
 batch_records = []
+unique_apps_names = set(get_all_apps_names())
 
 def record_active_window() -> None:
     global batch_records
     window_info = get_active_window_info()
+    # add new app to unique apps names
+    if window_info['app_name'] not in unique_apps_names:
+        unique_apps_names.add(window_info['app_name'])
+        threading.Thread(target=save_app_icon, args=(window_info,)).start()
     window_info['timestamp'] = int(time.time())
+    # add new record to batch
     batch_records.append(window_info)
+    # insert batch to db if its size reached its threshold
     if len(batch_records) >= batch_size or time.time() - batch_records[0]['timestamp'] >= batch_size:
         for record in batch_records:
             add_record(record['app_name'], record['exe_path'], record['timestamp'])

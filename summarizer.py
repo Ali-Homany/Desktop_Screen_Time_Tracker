@@ -54,6 +54,7 @@ def get_usage_by_apps(date: datetime.date) -> pd.DataFrame:
         .filter(func.date(HourlyRecords.datetime) == date)
         .group_by(App.app_name)
         .having(func.sum(HourlyRecords.duration) >= 60) # filter out apps used less than 1 minute
+        .order_by(func.sum(HourlyRecords.duration).asc())
     )
     results = query.all()
     session.close()
@@ -64,7 +65,7 @@ def get_usage_by_apps(date: datetime.date) -> pd.DataFrame:
 
 def get_unique_days() -> list:
     session = create_db()
-    query = session.query(func.distinct(func.date(HourlyRecords.datetime))).order_by(func.date(HourlyRecords.datetime))
+    query = session.query(func.distinct(func.date(HourlyRecords.datetime))).order_by(func.date(HourlyRecords.datetime).asc())
     result = [date[0] for date in query.all()]
     session.close()
     return result

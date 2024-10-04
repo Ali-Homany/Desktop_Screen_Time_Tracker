@@ -57,6 +57,11 @@ def get_all_records() -> DataFrame:
     df = DataFrame([record.__dict__ for record in records])
     df.rename({'duration': 'usage'})
     return df
+def get_all_apps_names() -> list[str]:
+    session = create_db()
+    apps = session.query(App).all()
+    session.close()
+    return [app.app_name for app in apps]
 
 def add_record(app_name: str, app_path: str, timestamp: int) -> None:
     # Create a database session
@@ -71,6 +76,18 @@ def add_record(app_name: str, app_path: str, timestamp: int) -> None:
     record = Record(timestamp=timestamp, app=app)
     session.add(record)
     session.commit()
+    session.close()
+
+def update_app_icon(app_name: str, icon_path: str, file_location: str='') -> None:
+    session = create_db()
+    app = session.query(App).filter_by(app_name=app_name).first()
+    if not app:
+        app = App(app_name=app_name, icon_location=icon_path, file_location=file_location or 'Unknown')
+        session.add(app)
+    elif icon_path and icon_path != 'Unknown' and os.path.exists(icon_path):
+        app.icon_location = icon_path
+    session.commit()
+    session.close()
 
 def is_transformation_needed() -> bool:
     """

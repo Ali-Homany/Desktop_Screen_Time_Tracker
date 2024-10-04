@@ -1,8 +1,9 @@
-pandas
-win32gui
-matplotlib
+Flask
 plotly
-dash
+Pillow
+icoextract
+svgwrite
+pandas
 pywin32
 wmi
 pyinstaller

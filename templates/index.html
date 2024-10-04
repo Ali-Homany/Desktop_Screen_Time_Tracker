@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styling.css') }}">
+    <title>App Usage Tracker</title>
+</head>
+<body>
+    <h1>App Usage Tracker</h1>
+
+    <!-- For the date selection form (app usage graph) -->
+    <h2>Select a Date to View App Usage</h2>
+    <div class="header">
+        <form id="date-form">
+            <input type="date" id="app-usage-date" name="date">
+        </form>
+        <div id="dayHours"></div>
+    </div>
+    <div id="app-usage-chart"></div>
+
+    <!-- For the aggregation level form (daily usage graph) -->
+    <h2>Daily screen time usage at different levels</h2>
+    <form id="aggregation-form">
+        <label>
+            <input type="radio" name="aggregation-level" value="Daily" checked> Daily
+        </label>
+        <label>
+            <input type="radio" name="aggregation-level" value="Monthly"> Monthly
+        </label>
+        <label>
+            <input type="radio" name="aggregation-level" value="Yearly"> Yearly
+        </label>
+    </form>
+        <!-- Plotly app usage graph will be rendered here -->
+    </div>
+
+    <div id="daily-usage-chart">
+        <!-- Plotly daily usage graph will be rendered here -->
+    </div>
+
+    
+    <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        // For the date selection form
+        function fetchAppUsage(selectedDate) {
+            fetch(`/update-app-usage?date=${selectedDate}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.graphJSON) {
+                    var graph = JSON.parse(data.graphJSON)
+                    Plotly.newPlot('app-usage-chart', graph.data, graph.layout, {'displayModeBar': false});  // Use JSON.parse
+                    document.getElementById('dayHours').innerHTML = "Total Hours: " + (data.dayHoursDisplay ? Math.round(data.dayHoursDisplay * 100) / 100 : 0).toFixed(2) + " hrs";
+                    document.getElementById('app-usage-date').value = data.selectedDate;
+                } else {
+                    console.error('No data available for this date.');
+                }
+            })
+            .catch(error => console.error('Error updating app usage graph:', error));
+        }
+        document.getElementById('app-usage-date').addEventListener('change', function() {
+            const selectedDate = this.value;
+            fetchAppUsage(selectedDate)
+        });
+
+        // For the aggregation level form
+        function fetchDailyUsage(selectedLevel) {
+            fetch(`/update-daily-usage?level=${selectedLevel}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.graphJSON) {
+                    var graph = JSON.parse(data.graphJSON);
+                    Plotly.newPlot('daily-usage-chart', graph.data, graph.layout, {'displayModeBar': false});  // Use JSON.parse
+                } else {
+                    console.error('No data available for this aggregation level.');
+                }
+            })
+            .catch(error => console.error('Error updating daily usage graph:', error));
+        }
+        document.querySelectorAll('input[name="aggregation-level"]').forEach(function(element) {
+            element.addEventListener('change', function() {
+                const selectedLevel = this.value;
+                fetchDailyUsage(selectedLevel)
+            });
+        });
+
+        window.onload = function() {
+            fetchDailyUsage(selectedDate=NaN);
+            fetchAppUsage(selectedLevel=NaN);
+        };
+        </script>
+    </body>
+</html>

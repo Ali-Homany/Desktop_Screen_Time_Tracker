@@ -1,0 +1,89 @@
+body {
+    font-family: Solway, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0 40px;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #A61436;
+    font-family: 'Solway';
+    font-size: 50px;
+    font-weight: 700;
+}
+h2 {
+    color: #A61436;
+    font-family: 'Solway';
+    font-size: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px;
+}
+#dayHours {
+    font-family: 'Solway';
+    font-weight: 500;
+    font-size: 20px;
+    color: #A61436;
+}
+
+/* Styling for the forms */
+form {
+    display: inline-block;
+    margin: 20px;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+/* Input field (date picker) styling */
+#date-form input[type="date"] {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #d1d1d1;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+#date-form input[type="date"]:focus {
+    border-color: #636efa;
+}
+
+/* Aggregation level radio button styling */
+#aggregation-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#aggregation-form input[type="radio"] {
+    margin-right: 10px;
+}
+
+/* Form container styling */
+#aggregation-form {
+    padding: 10px;
+}
+
+#aggregation-form label:hover input[type="radio"] {
+    border-color: #636efa;
+    transition: 0.3s;
+}
+
+/* Submit buttons and input fields hover effect */
+input[type="date"]:hover {
+    border-color: #636efa;
+    box-shadow: 0 0 5px rgba(99, 110, 234, 0.3);
+}
+
+input[type="radio"]:hover {
+    box-shadow: 0 0 5px rgba(99, 110, 234, 0.3);
+}
