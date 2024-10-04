@@ -26,10 +26,20 @@ Reads the records file & does necessary transformation.
 Includes following methods:
 - seconds_to_time
 - get_usage_by_apps
+- get_denormalized_records
 - get_unique_days
 - get_daily_usage
 
-### 4. App
+### 4. Icon Extractor
+Uses PIL library to extract icons from the active window, if it is a new app.
+
+Includes following methods:
+- extract_icon
+- ico_to_png
+- png_to_svg
+
+
+### 5. App
 Builds a simple Flask webapp that displays the screen time (for now) daily/monthly/yearly.
 Screenshots of the dashboard:
 <br>
@@ -47,10 +57,10 @@ Screenshots of the dashboard:
     - ~~Insert records as batches (keep 30s in-memory) to reduce I/O~~
     - ~~Summarize old days into hourly app usage data only (each 86,400 rows -> number of apps * 24)~~
 - Improve Dashboard Design
-- Add export option to export data to csv or excel
+- ~~Add export option to export data to csv or excel~~
 - ~~Add app icons to dashboard~~
 - ~~Migrate to Flask~~
-- Auto-Refresh Dashboard (auto-transform actually)
+- ~~Auto-Refresh Dashboard (auto-transform actually)~~
 
 These are just some ideas to be done soon, surely on the long-run many features could be added. Don't hesitate to share any suggestions!
 

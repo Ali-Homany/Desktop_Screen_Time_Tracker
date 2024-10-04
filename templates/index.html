@@ -39,7 +39,13 @@
         <!-- Plotly daily usage graph will be rendered here -->
     </div>
 
-    
+    <button id="export-btn">Export Data</button>
+
+    <script>
+        document.getElementById('export-btn').addEventListener('click', function() {
+            window.location.href = '/export-data';
+        });
+    </script>
     <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
         // For the date selection form

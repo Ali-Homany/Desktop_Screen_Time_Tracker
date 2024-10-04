@@ -89,7 +89,7 @@ def update_app_icon(app_name: str, icon_path: str, file_location: str='') -> Non
     session.commit()
     session.close()
 
-def is_transformation_needed() -> bool:
+def is_transformation_needed() -> int:
     """
     Checks if transformation is needed or not
     """
@@ -97,7 +97,7 @@ def is_transformation_needed() -> bool:
     count = session.query(Record).count()
     session.close()
     # Check if there are more than 600 records (10 minutes)
-    return count > 600
+    return max(0, 600 - count)
 
 def transform_new_data() -> None:
     """

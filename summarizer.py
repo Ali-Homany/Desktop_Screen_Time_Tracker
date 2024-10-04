@@ -62,6 +62,12 @@ def get_usage_by_apps(date: datetime.date) -> pd.DataFrame:
     app_counts['usage'] = app_counts['usage'] / 60  # timestamp is in seconds
     return app_counts
 
+def get_denormalized_records() -> pd.DataFrame:
+    session = create_db()
+    query = session.query(HourlyRecords.datetime, App.app_name, HourlyRecords.duration).join(App)
+    result = pd.read_sql(query.statement, session.bind)
+    session.close()
+    return result
 
 def get_unique_days() -> list:
     session = create_db()

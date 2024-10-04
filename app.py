@@ -1,17 +1,15 @@
-from flask import Flask, render_template, send_from_directory, request, jsonify
+from flask import Flask, render_template, send_from_directory, request, jsonify, make_response
 import plotly.graph_objects as go
 from plotly.utils import PlotlyJSONEncoder
-from summarizer import get_daily_usage, get_unique_days, get_usage_by_apps
+from summarizer import get_daily_usage, get_unique_days, get_usage_by_apps, get_denormalized_records
 from db import is_transformation_needed, transform_new_data
 import json
 import os
+import time
 import pandas as pd
 
 
 app = Flask(__name__)
-# revoke etl process if needed
-if is_transformation_needed():
-    transform_new_data()
 unique_days = get_unique_days()
 
 # Serve files from the 'Icons' folder
@@ -27,6 +25,21 @@ def serve_icon(filename):
 def index():
     # Render the index page with the empty graph initially
     return render_template('index.html')
+
+@app.route('/export-data', methods=['GET'])
+def export_data():
+    df = get_denormalized_records()
+    df = df.rename(columns={'duration': 'duration (in seconds)', 'datetime': 'datetime (every hour)'})
+    # Create a CSV file from the data
+    csv_data = df.to_csv(index=False)
+
+    # Create a response with the CSV file
+    response = make_response(csv_data)
+    response.headers['Content-Disposition'] = 'attachment; filename="screentime_data.csv"'
+    response.headers['Content-Type'] = 'text/csv'
+
+    return response
+
 
 def create_app_usage_figure(app_usage_df: pd.DataFrame) -> go.Figure:
     # Create the bar chart
@@ -141,5 +154,23 @@ def update_daily_usage_graph():
     return jsonify({'graphJSON': daily_usage_json})
 
 
+# Auto-refresh the database every minute
+def auto_refresh():
+    while True:
+        # revoke etl process if needed
+        time_left = is_transformation_needed()
+        print('time left ', time_left)
+        if time_left == 0:
+            transform_new_data()
+        time.sleep(time_left)
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Start the auto-refresh thread
+    import threading
+    threading.Thread(target=auto_refresh, daemon=True).start()
+    # Open the webapp
+    import webbrowser
+    webbrowser.open('http://127.0.0.1:8050/')
+    # Run the webapp
+    app.run(debug=False, port=8050)

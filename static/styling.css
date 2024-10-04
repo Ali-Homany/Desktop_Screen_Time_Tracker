@@ -41,15 +41,17 @@ form {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: left;
 }
-
+form input {
+    cursor: pointer;
+}
 /* Input field (date picker) styling */
 #date-form input[type="date"] {
     padding: 8px;
     font-size: 16px;
-    border: 1px solid #d1d1d1;
+    border: none;
     border-radius: 5px;
     outline: none;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.8s;
 }
 
 #date-form input[type="date"]:focus {
@@ -86,4 +88,23 @@ input[type="date"]:hover {
 
 input[type="radio"]:hover {
     box-shadow: 0 0 5px rgba(99, 110, 234, 0.3);
+}
+
+
+#export-btn {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-family: inherit;
+    background-color: #636efa;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.5s ease;
+}
+#export-btn:hover {
+    background-color: #464db1;
 }
