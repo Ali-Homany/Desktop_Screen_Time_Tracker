@@ -1,10 +1,9 @@
 import pandas as pd
 import datetime
-from db import (
+from utils.db import (
     App,
     HourlyRecords,
-    create_db,
-    get_all_records
+    create_db
 )
 from sqlalchemy import func
 

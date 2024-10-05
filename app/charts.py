@@ -1,44 +1,28 @@
-from flask import Flask, render_template, send_from_directory, request, jsonify, make_response
+from flask import Blueprint, send_from_directory, request, jsonify
 import plotly.graph_objects as go
 from plotly.utils import PlotlyJSONEncoder
-from summarizer import get_daily_usage, get_unique_days, get_usage_by_apps, get_denormalized_records
-from db import is_transformation_needed, transform_new_data
+from utils.summarizer import get_daily_usage, get_unique_days, get_usage_by_apps
 import json
 import os
-import time
 import pandas as pd
 
+"""
+This blueprint is responsible for routes related to charts interactivity.
+Currently it provides 2 routes:
+- update-app-usage
+- update-daily-usage
+and an extra route for icons
+"""
 
-app = Flask(__name__)
+charts = Blueprint('charts', __name__)
 unique_days = get_unique_days()
 
 # Serve files from the 'Icons' folder
 icons_dir = os.path.join(os.path.expanduser('~'), 'Documents', 'Screen_Time_Tracker', 'Icons')
 os.makedirs(icons_dir, exist_ok=True)
-@app.route('/Icons/<path:filename>')
+@charts.route('/Icons/<path:filename>')
 def serve_icon(filename):
     return send_from_directory(icons_dir, filename)
-
-
-# Route for the index page
-@app.route('/', methods=['GET'])
-def index():
-    # Render the index page with the empty graph initially
-    return render_template('index.html')
-
-@app.route('/export-data', methods=['GET'])
-def export_data():
-    df = get_denormalized_records()
-    df = df.rename(columns={'duration': 'duration (in seconds)', 'datetime': 'datetime (every hour)'})
-    # Create a CSV file from the data
-    csv_data = df.to_csv(index=False)
-
-    # Create a response with the CSV file
-    response = make_response(csv_data)
-    response.headers['Content-Disposition'] = 'attachment; filename="screentime_data.csv"'
-    response.headers['Content-Type'] = 'text/csv'
-
-    return response
 
 
 def create_app_usage_figure(app_usage_df: pd.DataFrame) -> go.Figure:
@@ -74,7 +58,7 @@ def create_app_usage_figure(app_usage_df: pd.DataFrame) -> go.Figure:
     return fig
 
 # Route for updating the app usage graph
-@app.route('/update-app-usage', methods=['GET'])
+@charts.route('/update-app-usage', methods=['GET'])
 def update_app_usage_graph():
     # get the args
     selected_date = request.args.get('date')
@@ -134,7 +118,7 @@ def create_daily_usage_figure(aggregated_df: pd.DataFrame, selected_level: str) 
     return fig
 
 # Route for updating the daily usage graph
-@app.route('/update-daily-usage', methods=['GET'])
+@charts.route('/update-daily-usage', methods=['GET'])
 def update_daily_usage_graph():
     # get the args
     selected_level = request.args.get('level')
@@ -152,25 +136,3 @@ def update_daily_usage_graph():
     # Convert the figure to JSON and return it
     daily_usage_json = json.dumps(fig, cls=PlotlyJSONEncoder)
     return jsonify({'graphJSON': daily_usage_json})
-
-
-# Auto-refresh the database every minute
-def auto_refresh():
-    while True:
-        # revoke etl process if needed
-        time_left = is_transformation_needed()
-        print('time left ', time_left)
-        if time_left == 0:
-            transform_new_data()
-        time.sleep(time_left)
-
-
-if __name__ == '__main__':
-    # Start the auto-refresh thread
-    import threading
-    threading.Thread(target=auto_refresh, daemon=True).start()
-    # Open the webapp
-    import webbrowser
-    webbrowser.open('http://127.0.0.1:8050/')
-    # Run the webapp
-    app.run(debug=False, port=8050)

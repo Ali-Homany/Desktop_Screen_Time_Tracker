@@ -4,8 +4,8 @@ import wmi
 import time
 import os
 from datetime import datetime
-from db import add_record, get_all_apps_names, update_app_icon
-from icon_extractor import extract_icon
+from utils.db import add_record, get_all_apps_names, update_app_icon
+from utils.icon_extractor import extract_icon
 import threading
 
 
