@@ -59,7 +59,18 @@ def get_usage_by_apps(date: datetime.date) -> pd.DataFrame:
     session.close()
     app_counts = pd.DataFrame(results, columns=['app_name', 'usage'])
     app_counts['usage'] = app_counts['usage'] / 60  # timestamp is in seconds
-    return app_counts
+    # filter top apps
+    n_top = 5
+    if len(app_counts) <= n_top:
+        return app_counts
+    top_apps = app_counts.tail(n_top).reset_index(drop=True)
+    # add others row
+    other_apps = pd.DataFrame({
+        'app_name': ['Other'],
+        'usage': [app_counts['usage'].sum() - top_apps['usage'].sum()]
+    })
+    top_apps = pd.concat([other_apps, top_apps], ignore_index=True)
+    return top_apps
 
 def get_denormalized_records() -> pd.DataFrame:
     session = create_db()

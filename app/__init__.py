@@ -11,6 +11,7 @@ def create_app() -> Flask:
         static_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static')
     )
 
+    app.secret_key = os.urandom(24)
 
     app.register_blueprint(home_blueprint)
     app.register_blueprint(charts_blueprint)

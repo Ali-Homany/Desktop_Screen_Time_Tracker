@@ -1,4 +1,4 @@
-from flask import Blueprint, send_from_directory, request, jsonify
+from flask import Blueprint, send_from_directory, request, jsonify, session
 import plotly.graph_objects as go
 from plotly.utils import PlotlyJSONEncoder
 from utils.summarizer import get_daily_usage, get_unique_days, get_usage_by_apps
@@ -53,7 +53,8 @@ def create_app_usage_figure(app_usage_df: pd.DataFrame) -> go.Figure:
         showlegend=False,
         margin=dict(l=200),
         modebar_remove=True,
-        dragmode=False
+        dragmode=False,
+        template='plotly_dark' if session.get('theme', 'light') == 'dark' else 'plotly_white'
     )
     return fig
 
@@ -113,7 +114,8 @@ def create_daily_usage_figure(aggregated_df: pd.DataFrame, selected_level: str) 
         bargap=0.3,
         height=500,
         modebar_remove=True,
-        dragmode=False
+        dragmode=False,
+        template='plotly_dark' if session.get('theme', 'light') == 'dark' else 'plotly_white'
     )
     return fig
 

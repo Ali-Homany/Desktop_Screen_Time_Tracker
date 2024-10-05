@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, make_response
+from flask import Blueprint, render_template, make_response, session, url_for, redirect
 from utils.summarizer import get_denormalized_records
 
 
@@ -23,3 +23,11 @@ def export_data():
     response.headers['Content-Type'] = 'text/csv'
 
     return response
+
+@home.route('/change-theme')
+def change_theme():
+    if 'theme' not in session or session['theme'] == 'light':
+        session['theme'] = 'dark'
+    else:
+        session['theme'] = 'light'
+    return redirect(url_for('home.index'))
