@@ -64,8 +64,9 @@ Screenshots of the webapp:
 - ~~Auto-Refresh Dashboard (auto-transform actually)~~
 - ~~Add setting page:~~
     - ~~Add dark theme~~
-    - Add daily screen time goal (symbolic, doesn't block anything)
+    - ~~Add daily screen time goal (symbolic, doesn't block anything)~~
 - ~~Wrap 6th+ apps as 'Others' so app usage graph contains max of 6 apps~~
+- Monthly Report
 
 These are just some ideas to be done soon, surely on the long-run many features could be added. Don't hesitate to share any suggestions!
 

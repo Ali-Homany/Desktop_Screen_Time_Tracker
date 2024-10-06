@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='common_light.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home_light.css') }}">
-    {% if session.get('theme') == 'dark' %}
+    {% if session.get('settings').get('theme') == 'dark' %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home_dark.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='common_dark.css') }}">
     {% endif %}
@@ -47,18 +47,6 @@
     </div>
 
 
-    <script>
-        // On page load used saved theme in local storage
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const savedTheme = localStorage.getItem('theme');
-            const currentTheme = '{{ session.get("theme", "light") }}';
-            
-            if (savedTheme && savedTheme !== currentTheme) {
-                fetch('/change-theme')
-                    .then(() => location.reload());
-            }
-        });
-    </script>
     <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
         // For the date selection form
@@ -68,8 +56,14 @@
             .then(data => {
                 if (data.graphJSON) {
                     var graph = JSON.parse(data.graphJSON)
-                    Plotly.newPlot('app-usage-chart', graph.data, graph.layout, {'displayModeBar': false});  // Use JSON.parse
-                    document.getElementById('dayHours').innerHTML = "Total Hours: " + (data.dayHoursDisplay ? Math.round(data.dayHoursDisplay * 100) / 100 : 0).toFixed(2) + " hrs";
+                    Plotly.newPlot('app-usage-chart', graph.data, graph.layout, {'displayModeBar': false});
+                    console.log('im here: ', data.dayHoursGraph)
+                    if (data.dayHoursGraph === null || data.dayHoursGraph == 'null') {
+                        document.getElementById('dayHours').innerHTML = "Total Hours: " + (data.dayHours ? Math.round(data.dayHours * 100) / 100 : 0).toFixed(2) + " hrs";
+                    }else {
+                        var graph = JSON.parse(data.dayHoursGraph)
+                        Plotly.newPlot('dayHours', graph.data, graph.layout, {'displayModeBar': false});
+                    }
                     document.getElementById('app-usage-date').value = data.selectedDate;
                 } else {
                     console.error('No data available for this date.');
