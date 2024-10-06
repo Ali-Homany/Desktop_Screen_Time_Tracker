@@ -1,0 +1,87 @@
+a#settings {
+    position: absolute;
+    top: 70px;
+    right: 80px;
+}
+a#settings svg{
+    fill: var(--purple);
+    width: 30px;
+    aspect-ratio: 1/1;
+}
+
+#dayHours {
+    font-family: 'Solway';
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--red);
+}
+
+/* forms styling */
+form {
+    display: inline-block;
+    margin: 20px;
+    padding: 10px;
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+form input {
+    cursor: pointer;
+}
+
+
+/* date selector styling */
+#date-form input[type="date"] {
+    padding: 8px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.8s;
+}
+#date-form input[type="date"]:focus {
+    border-color: var(--purple);
+}
+input[type="date"]:hover {
+    border-color: var(--purple);
+    box-shadow: 0 0 5px rgba(99, 110, 234, 0.3);
+}
+
+
+/* aggregation level radios */
+#aggregation-form {
+    padding: 10px;
+}
+#aggregation-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+input[type="radio"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--red);
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer;
+    background-color: var(--white);
+    vertical-align: middle;
+    margin-right: 5px;
+}
+input[type="radio"]:checked {
+    background-color: var(--red);
+    border-color: var(--red);
+    position: relative;
+}
+#aggregation-form label:hover input[type="radio"] {
+    border-color: var(--purple);
+    transition: 0.3s;
+}
+input[type="radio"]:hover {
+    box-shadow: 0 0 5px #636eea4d;
+}

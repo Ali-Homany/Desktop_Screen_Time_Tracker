@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='common_light.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='settings_light.css') }}">
+    {% if session.get('theme') == 'dark' %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='common_dark.css') }}">
+    {% endif %}
+    <title>Settings</title>
+</head>
+<body>
+    <h1>Settings</h1>
+    
+    <div class="settings-container">
+        <div class="row">
+            <svg id="theme-btn" aria-hidden="true" data-prefix="fas" data-icon="adjust" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-inline--fa fa-adjust fa-w-16 fa-7x"><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z" class=""></path></svg>
+            <p>Change Theme</p>
+        </div>
+        <div class="row">
+            <svg id="export-btn" aria-hidden="true" data-prefix="far" data-icon="file-export" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="svg-inline--fa fa-file-export fa-w-18 fa-7x"><path d="M572.29 279.06l-71.77-72.31c-7.55-7.6-20.52-2.26-20.52 8.45v48.88h-96v-132.1c0-12.7-5.17-25-14.17-33.99L285.94 14.1c-9-9-21.2-14.1-33.89-14.1H47.99C21.5.1 0 21.6 0 48.09v415.92C0 490.5 21.5 512 47.99 512h287.94c26.5 0 48.07-21.5 48.07-47.99V360.07h-48v103.94H47.99V48.09h159.97v103.98c0 13.3 10.7 23.99 24 23.99H336v88.01H172c-6.63 0-12 5.37-12 12v24c0 6.63 5.37 12 12 12h308v48.88c0 10.71 12.97 16.05 20.52 8.45l71.77-72.31c4.95-4.99 4.95-13.04 0-18.03zM255.95 128.07V51.99l76.09 76.08h-76.09z" class=""></path></svg>
+            <p>Export Data</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('export-btn').addEventListener('click', function() {
+            window.location.href = '/export-data';
+        });
+    </script>
+    <script>
+        // On page load used saved theme in local storage
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const savedTheme = localStorage.getItem('theme');
+            const currentTheme = '{{ session.get("theme", "light") }}';
+            
+            if (savedTheme && savedTheme !== currentTheme) {
+                fetch('/change-theme')
+                    .then(() => location.reload());
+            }
+        });
+        // When changing theme
+        document.getElementById('theme-btn').addEventListener('click', function() {
+            const currentTheme = '{{ session.get("theme", "light") }}';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', newTheme);
+            fetch('/change-theme')
+                .then(() => location.reload());
+        });
+    </script>
+</body>
+</html>

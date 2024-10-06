@@ -62,7 +62,7 @@ Screenshots of the webapp:
 - ~~Add app icons to dashboard~~
 - ~~Migrate to Flask~~
 - ~~Auto-Refresh Dashboard (auto-transform actually)~~
-- Add setting page:
+- ~~Add setting page:~~
     - ~~Add dark theme~~
     - Add daily screen time goal (symbolic, doesn't block anything)
 - ~~Wrap 6th+ apps as 'Others' so app usage graph contains max of 6 apps~~

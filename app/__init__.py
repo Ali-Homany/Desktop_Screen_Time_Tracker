@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from app.charts import charts as charts_blueprint
 from app.home import home as home_blueprint
+from app.settings import settings as settings_blueprint
 
 
 def create_app() -> Flask:
@@ -15,5 +16,6 @@ def create_app() -> Flask:
 
     app.register_blueprint(home_blueprint)
     app.register_blueprint(charts_blueprint)
+    app.register_blueprint(settings_blueprint)
 
     return app
