@@ -20,7 +20,13 @@ Provides utilities functionalities for the recorder and webapp.
 - get_unique_days
 - get_daily_usage
 
-#### 3. Icon Extractor: Uses PIL library to extract icons from the active window, if it is a new app, includes following methods:
+#### 3. Charts: Creates plotly figures as json depending on user preferences. It includes following methods:
+- create_app_usage_figure
+- create_app_usage_figure
+- aggregate_data
+- create_daily_usage_figure
+
+#### 4. Icon Extractor: Uses PIL library to extract icons from the active window, if it is a new app, includes following methods:
 - extract_icon
 - ico_to_png
 - png_to_svg
@@ -39,7 +45,7 @@ Builds a simple Flask webapp that displays the screen time daily/monthly/yearly,
 
 It consists of 2 blueprints:
 - home.py: provides basic routes for the webapp
-- charts.py: provides routes for displaying charts
+- settings.py: provides routes for changing user preferences
 
 Screenshots of the webapp:
 <br>
@@ -66,7 +72,11 @@ Screenshots of the webapp:
     - ~~Add dark theme~~
     - ~~Add daily screen time goal (symbolic, doesn't block anything)~~
 - ~~Wrap 6th+ apps as 'Others' so app usage graph contains max of 6 apps~~
-- Monthly Report
+- Monthly Report (most used apps, avg time, active hours..)
+- Add categories pie chart (let user set categories to apps)
+- Track Browser Usage:
+    - Save domains
+    - Duplicate home page but for browser screen time
 
 These are just some ideas to be done soon, surely on the long-run many features could be added. Don't hesitate to share any suggestions!
 
