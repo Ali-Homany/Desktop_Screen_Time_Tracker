@@ -15,7 +15,13 @@ def create_app_usage_figure(theme: THEME, app_usage_df: pd.DataFrame) -> str:
         y=app_usage_df['app_name'],
         orientation='h',
         marker_color='#6f54d3',
+        width=0.4
     ))
+
+    # dynamic icon size based on the num of rows
+    num_bars = len(app_usage_df)
+    icon_size = min((num_bars * 0.1), 0.6)
+
     # Add images (icons) as annotations
     for index, row in app_usage_df.iterrows():
         fig.add_layout_image(
@@ -23,7 +29,7 @@ def create_app_usage_figure(theme: THEME, app_usage_df: pd.DataFrame) -> str:
                 source=f'/Icons/{row["app_name"]}.ico',
                 xref="paper", yref="y",
                 x=-0.1, y=row['app_name'],
-                sizex=0.5, sizey=0.5,
+                sizex=icon_size, sizey=icon_size,
                 xanchor="right", yanchor="middle"
             )
         )

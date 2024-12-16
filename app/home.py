@@ -10,7 +10,6 @@ home = Blueprint('home', __name__)
 # Route for the index page
 @home.route('/', methods=['GET'])
 def index():
-    print(session['settings'])
     # Render the index page with the empty graph initially
     return render_template('index.html')
 
@@ -25,12 +24,15 @@ def serve_icon(filename):
 
 unique_days = get_unique_days()
 # Route for updating the app usage graph
-@home.route('/update-app-usage', methods=['GET'])
+@home.route('/get-app-usage', methods=['GET'])
 def update_app_usage_graph():
     # get the args
     selected_date = request.args.get('date')
     if not selected_date or selected_date == 'NaN':
-        selected_date = unique_days[-1]
+        if unique_days:
+            selected_date = unique_days[-1]
+        else:
+            return jsonify({'appUsageJSON': None, 'message': 'Recorded usage data is not enough yet.'})
 
     # Fetch the app usage data for the selected date
     app_usage_df = get_usage_by_apps(selected_date)
@@ -49,7 +51,7 @@ def update_app_usage_graph():
 
 
 # Route for updating the daily usage graph
-@home.route('/update-daily-usage', methods=['GET'])
+@home.route('/get-daily-usage', methods=['GET'])
 def update_daily_usage_graph():
     # get the args
     selected_level = request.args.get('level')

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, make_response, session, url_for, redirect, request
+from flask import Blueprint, render_template, make_response, session, url_for, redirect, request, jsonify
 from utils.summarizer import get_denormalized_records
 import os
 import json
@@ -33,16 +33,24 @@ def export_data():
 
 @settings.route('/change-theme')
 def change_theme():
-    if session['settings']['theme'] == 'light':
-        session['settings']['theme'] = 'dark'
-    else:
-        session['settings']['theme'] = 'light'
-    update_settings()
-    return redirect(url_for('settings.index'))
+    try:
+        if session['settings']['theme'] == 'light':
+            session['settings']['theme'] = 'dark'
+        else:
+            session['settings']['theme'] = 'light'
+        update_settings()
+    except:
+        return jsonify({"message": "Error updating theme."})
+    return jsonify({"message": "Theme successfully updated!"})
 
 @settings.route('/set-goal', methods=['POST'])
 def set_goal():
-    goal = request.form['goal']
-    session['settings']['daily_goal'] = goal
-    update_settings()
-    return redirect(url_for('settings.index'))
+    try:
+        goal = request.form['goal']
+        if int(goal) < 0 or int(goal) > 23:
+            return jsonify({"message": "Goal must be between 0 and 23."})
+        session['settings']['daily_goal'] = goal
+        update_settings()
+    except:
+        return jsonify({"message": "Error updating goal."})
+    return jsonify({"message": "Goal successfully updated to " + goal + "hrs!"})

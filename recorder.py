@@ -52,7 +52,7 @@ unique_apps_names = set(get_all_apps_names())
 
 def record_active_window() -> None:
     global batch_records
-    window_info = get_active_window_info()
+    window_info = get_active_window_info() or {'title': 'Unknown', 'app_name': 'Unknown', 'exe_path': 'Unknown'}
     # add new app to unique apps names
     if window_info['app_name'] not in unique_apps_names:
         unique_apps_names.add(window_info['app_name'])

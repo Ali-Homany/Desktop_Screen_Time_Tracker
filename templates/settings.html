@@ -54,10 +54,8 @@
                 },
                 body: `goal=${goal}`
             })
-            .then(response => response.text())
-            .then(message => console.log(message));
-
-            document.getElementById('goal-input').value = '';
+            .then(response => response.json())
+            .then(data => alert(data.message));
         });
     </script>
     <script>
@@ -68,6 +66,8 @@
             console.log('curr', currentTheme, 'new', newTheme)
 
             fetch('/change-theme')
+                .then(response => response.json())
+                .then(data => alert(data.message))
                 .then(() => location.reload());
         });
     </script>
