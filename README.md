@@ -83,38 +83,47 @@ These are just some ideas to be done soon, surely on the long-run many features 
 <br>
 
 ## Usage
-For the ready-to-use application, download the executable setup file from the latest release, [here](https://github.com/homanydata/Desktop_Screen_Time_Tracker/releases/tag/v0.2.0). Run it and follow the instructions within the installer.
+For the ready-to-use application, download the executable setup file from the latest release, [here](https://github.com/homanydata/Desktop_Screen_Time_Tracker/releases/tag/v0.2.1). Run it and follow the instructions within the installer.
 
-To try the code yourself, you can do the following:
+In order to re-create the Installer executable from the code yourself, kindly follow the steps below:
 
 1. Clone the repo
     ```
-    git clone https://github.com/yourusername/Desktop_Screen_Time_Tracker.git
+    git clone https://github.com/homanydata/Desktop_Screen_Time_Tracker.git
     ```
-2. Install the requirements
+2. Create conda environment:
+
+    [Install Anaconda](https://docs.anaconda.com/anaconda/install/) on your machine if you don't have it yet, open its `anaconda prompt` then run
+    ```
+    conda create --name screen_time_env python
+    ```
+3. Install dependencies:
+
+    Activate the new environment
+    ```
+    conda activate screen_time_env
+    ```
+    Then install the requirements using pip
     ```
     pip install -r requirements.txt
     ```
-3. Create executables
+4. Run [create_application.bat](./deploy/create_application.bat):
 
-    Run the following commands in the command line (in the project directory)
-    ```
-    pyinstaller --onefile --noconsole recorder.py
-    ```
-    ```
-    pyinstaller --onefile --add-data "static;static" --add-data "templates;templates" main.py
-    ```
-    You will find the exectuables in the dist folder. Make sure to move the recorder.exe and main.exe to the root directory of the repository.
+    This will create 2 executables and wrap them into an Installer executable. Done!
 
-4. Create a shortcut for the recorder.exe
+<br>
 
-5. Run Recorder on Startup:
+However, if you're more curious or you don't want to run an installer, you might continue the steps below:
+
+5. Create shortcuts for the recorder.exe and main.exe
+
+6. Run Recorder on Startup:
 
     Move the recorder shortcut to the `C:\Users\Admiin\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\`.
     
     Now the recorder will run on startup and log the screen time to the screentime.db file.
 
-6. Run the main.exe to view the screen time.
+7. Run the main.exe to view your screen time dashboard!
 
 <br><br>
 ## Get Involved!
