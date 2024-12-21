@@ -1,0 +1,16 @@
+{
+    "manifest_version": 3,
+    "name": "BrowserUsageTracker",
+    "description": "Fetches current tab url.",
+    "version": "0.1",
+    "author": "Ali Houmani",
+    "action": {
+        "default_icon": "icon.ico",
+        "default_title": "tracking browser usage."
+    },
+    "permissions": ["tabs", "activeTab", "storage"],
+    "host_permissions": ["http://127.0.0.1:8049/*"],
+    "background": {
+        "service_worker": "background.js"
+    }
+}

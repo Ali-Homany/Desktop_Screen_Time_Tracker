@@ -23,12 +23,24 @@ class App(PrintableBase):
     file_location = Column(String, nullable=False)
     icon_location = Column(String, nullable=True)
 
+class Website(PrintableBase):
+    __tablename__ = 'Websites'
+    id = Column(Integer, primary_key=True)
+    domain_name = Column(String, unique=True)
+
 class Record(PrintableBase):
     __tablename__ = 'Records'
     id = Column(Integer, primary_key=True)
     timestamp = Column(Integer, nullable=False)
     app_id = Column(Integer, ForeignKey('Apps.id'), nullable=False)
     app = relationship("App")
+
+class BrowserRecord(PrintableBase):
+    __tablename__ = 'BrowserRecords'
+    id = Column(Integer, primary_key=True)
+    timestamp = Column(Integer, nullable=False)
+    website_id = Column(Integer, ForeignKey('Websites.id'), nullable=False)
+    website = relationship("Website")
 
 class HourlyRecords(PrintableBase):
     __tablename__ = 'HourlyRecords'
@@ -75,6 +87,20 @@ def add_record(app_name: str, app_path: str, timestamp: int) -> None:
     # Create a new record entry
     record = Record(timestamp=timestamp, app=app)
     session.add(record)
+    session.commit()
+    session.close()
+def add_browser_record(domain_name: str, url: str, timestamp: int) -> None:
+    # Create a database session
+    session = create_db()
+    # Check if the app is already in the database
+    website = session.query(Website).filter_by(domain_name=domain_name).first()
+    if not website:
+        # If not, create a new app entry
+        website = Website(domain_name=domain_name)
+        session.add(website)
+    # Create a new browser_record entry
+    browser_record = BrowserRecord(timestamp=timestamp, website=website)
+    session.add(browser_record)
     session.commit()
     session.close()
 
