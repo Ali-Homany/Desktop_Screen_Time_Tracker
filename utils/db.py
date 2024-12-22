@@ -137,8 +137,10 @@ def is_transformation_needed() -> int:
     session = create_db()
     count = session.query(Record).count()
     session.close()
-    # Check if there are more than 600 records (10 minutes)
-    return max(0, 20 - count)
+    # Check if there are more than max records
+    # 600 records (10 minutes)
+    MAX_RECORDS = 600
+    return max(0, MAX_RECORDS - count)
 
 def transform_new_data() -> None:
     """

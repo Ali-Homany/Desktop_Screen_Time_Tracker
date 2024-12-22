@@ -3,13 +3,15 @@ Simple python screen time tracker for windows desktop.
 
 ## Components:
 ### \# Utils:
-Provides utilities functionalities for the recorder and webapp.
+Provides utilities functionalities for other parts of the application.
 #### 1. DB: Creates database schema using SQLAlchemy, and provides necessary methods to interact with the database:
 - create_db
 - get_all_records
 - add_record
 - get_all_apps_names
 - update_app_icon
+- get_last_browser_tab
+- add_browser_record
 - is_transformation_needed
 - transform_new_data
 
@@ -19,6 +21,10 @@ Provides utilities functionalities for the recorder and webapp.
 - get_denormalized_records
 - get_unique_days
 - get_daily_usage
+- filter_top
+- get_usage_by_websites
+- get_daily_browser_usage
+
 
 #### 3. Charts: Creates plotly figures as json depending on user preferences. It includes following methods:
 - create_app_usage_figure
@@ -37,14 +43,33 @@ Uses win32gui library to record the active window every second
 
 Includes following methods:
 - get_active_window_info
+- save_app_icon
 - record_active_window
 - log
+
+### Extension
+Chrome extension which helps the application to save current active tab in chrome, by sending requests to the browser_recorder.
+
+Includes following files (typical for chrome extensions):
+- background.js
+- manifest.json
+- icon.ico
+
+### Browser Recorder
+Builds a very basic flask app to recieve requests from the chrome extension and record the active chrome tab every second.
+
+Includes following methods:
+- record_active_browser_tab
+- extract_domain_name
+- run_server
+and 1 route /send-url which it recieves requests at.
 
 ### \# App:
 Builds a simple Flask webapp that displays the screen time daily/monthly/yearly, and usage by apps for a selected day.
 
-It consists of 2 blueprints:
+It consists of 3 blueprints:
 - home.py: provides basic routes for the webapp
+- browser.py: provides routes for the webapp for browser time tracking
 - settings.py: provides routes for changing user preferences
 
 Screenshots of the webapp:
@@ -74,9 +99,9 @@ Screenshots of the webapp:
 - ~~Wrap 6th+ apps as 'Others' so app usage graph contains max of 6 apps~~
 - Monthly Report (most used apps, avg time, active hours..)
 - Add categories pie chart (let user set categories to apps)
-- Track Browser Usage:
-    - Save domains
-    - Duplicate home page but for browser screen time
+- ~~Track Browser Usage:~~
+    - ~~Save domains~~
+    - ~~Duplicate home page but for browser screen time~~
 
 These are just some ideas to be done soon, surely on the long-run many features could be added. Don't hesitate to share any suggestions!
 
