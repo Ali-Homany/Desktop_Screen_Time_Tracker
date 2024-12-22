@@ -52,6 +52,16 @@ class HourlyRecords(PrintableBase):
     )
     app = relationship("App")
 
+class HourlyBrowserRecords(PrintableBase):
+    __tablename__ = 'HourlyBrowserRecords'
+    datetime = Column(DateTime, nullable=False)
+    website_id = Column(Integer, ForeignKey('Websites.id'), nullable=False)
+    duration = Column(Integer, nullable=False)
+    __table_args__ = (
+        PrimaryKeyConstraint('datetime', 'website_id'),
+    )
+    website = relationship("Website")
+
 def create_db(readonly: bool=False) -> Session:
     if readonly:
         engine = create_engine(DB_PATH + '?mode=ro', uri=True)
@@ -74,6 +84,11 @@ def get_all_apps_names() -> list[str]:
     apps = session.query(App).all()
     session.close()
     return [app.app_name for app in apps]
+def get_last_browser_tab() -> str:
+    session = create_db()
+    record = session.query(BrowserRecord).order_by(BrowserRecord.timestamp.desc()).first()
+    session.close()
+    return record.domain_name if record else None
 
 def add_record(app_name: str, app_path: str, timestamp: int) -> None:
     # Create a database session
@@ -89,7 +104,7 @@ def add_record(app_name: str, app_path: str, timestamp: int) -> None:
     session.add(record)
     session.commit()
     session.close()
-def add_browser_record(domain_name: str, url: str, timestamp: int) -> None:
+def add_browser_record(domain_name: str, timestamp: int) -> None:
     # Create a database session
     session = create_db()
     # Check if the app is already in the database
@@ -123,13 +138,38 @@ def is_transformation_needed() -> int:
     count = session.query(Record).count()
     session.close()
     # Check if there are more than 600 records (10 minutes)
-    return max(0, 600 - count)
+    return max(0, 20 - count)
 
 def transform_new_data() -> None:
     """
-    Transform & migrate the existing data from Records table into HourlyRecords table
+    Transform & migrate the existing data from BrowserRecords & Records tables
+    into HourlyBrowserRecords & HourlyRecords tables respectively
     """
     session = create_db()
+    # Get all records from Records table where app is a browser
+    records_in_browser = session.query(Record).join(App, Record.app_id == App.id).filter(App.app_name == 'Chrome').subquery()
+    # Get all records from BrowserRecords table joined with Records table
+    browser_records = session.query(BrowserRecord).join(records_in_browser, BrowserRecord.timestamp == records_in_browser.c.timestamp).all()
+    # group all records from BrowserRecords table based on primary key
+    hourly_browser_records_dict = {}
+    for record in browser_records:
+        website_id = record.website_id
+        timestamp = record.timestamp
+        hour = datetime.fromtimestamp(timestamp).replace(minute=0, second=0, microsecond=0)
+        if (hour, website_id) not in hourly_browser_records_dict:
+            hourly_browser_records_dict[(hour, website_id)] = 0
+        hourly_browser_records_dict[(hour, website_id)] += 1  # timestamp are in seconds
+    # load into HourlyBrowserRecords (as upsert query)
+    for (hour, website_id), duration in hourly_browser_records_dict.items():
+        existing_hourly_browser_record = session.query(HourlyBrowserRecords).filter_by(datetime=hour, website_id=website_id).first()
+        if existing_hourly_browser_record:
+            existing_hourly_browser_record.duration += duration
+        else:
+            new_hourly_browser_record = HourlyBrowserRecords(datetime=hour, website_id=website_id, duration=duration)
+            session.add(new_hourly_browser_record)
+    # truncate BrowserRecords
+    session.query(BrowserRecord).delete()
+
     # Get all records from Records table
     records = session.query(Record).all()
     # group all records from Records table based on primary key

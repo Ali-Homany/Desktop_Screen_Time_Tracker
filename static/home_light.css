@@ -1,3 +1,16 @@
+a#tag {
+    position: absolute;
+    top: 70px;
+    left: 80px;
+    background-color: var(--purple);
+    color: var(--white);
+    padding: 10px 20px;
+    border-radius: 25px;
+}
+a#tag:hover {
+    background-color: #543f9f;
+}
+
 a#settings {
     position: absolute;
     top: 70px;

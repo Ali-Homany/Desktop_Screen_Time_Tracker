@@ -2,6 +2,7 @@ import os
 from flask import Flask, session
 from app.home import home as home_blueprint
 from app.settings import settings as settings_blueprint
+from app.browser import browser as browser_blueprint
 
 
 def create_app(config: dict) -> Flask:
@@ -15,6 +16,7 @@ def create_app(config: dict) -> Flask:
 
     app.register_blueprint(home_blueprint)
     app.register_blueprint(settings_blueprint)
+    app.register_blueprint(browser_blueprint)
     
     @app.before_request
     def load_user_preferences():

@@ -9,3 +9,4 @@ wmi
 pyinstaller
 sqlalchemy
 waitress
+tldextract
