@@ -1,18 +1,15 @@
+import os
+import time
+import threading
+import wmi
 import win32gui
 import win32process
-import wmi
-import time
-import os
-from datetime import datetime
-from utils.db import add_record, get_all_apps_names, update_app_icon
+from utils.db import add_record, get_all_apps_names, add_app
 from utils.icon_extractor import extract_icon
-import threading
+from utils.logger import log
 
 
-# Error log directory in AppData\Roaming
-appdata_dir = os.path.join(os.getenv('APPDATA'), 'Screen_Time_Tracker')
-os.makedirs(appdata_dir, exist_ok=True)
-ERROR_LOG_PATH = os.path.join(appdata_dir, 'error_log.txt')
+# icons path
 icons_dir = os.path.join(os.path.expanduser('~'), 'Documents', 'Screen_Time_Tracker', 'Icons')
 os.makedirs(icons_dir, exist_ok=True)
 
@@ -37,14 +34,13 @@ def get_active_window_info() -> dict:
         log(f"Error getting window info: {e}")
         return {'title': 'Unknown', 'app_name': 'Unknown', 'exe_path': 'Unknown'}
 
-def save_app_icon(app_info: dict) -> None:
+def save_new_app(app_info: dict) -> None:
     try:
-        icon_path = extract_icon(app_info['app_name'], app_info['exe_path'], icons_dir)
+        extract_icon(app_info['app_name'], app_info['exe_path'], icons_dir)
+        add_app(app_name=app_info['app_name'], file_location=app_info['exe_path'])
     except Exception as e:
         log(f"Error extracting icon: {e}")
-        icon_path = 'Unknown'
-    # update app record adding the icon
-    update_app_icon(app_info['app_name'], icon_path, app_info['exe_path'])
+
 
 batch_size = 30
 batch_records = []
@@ -56,7 +52,7 @@ def record_active_window() -> None:
     # add new app to unique apps names
     if window_info['app_name'] not in unique_apps_names:
         unique_apps_names.add(window_info['app_name'])
-        threading.Thread(target=save_app_icon, args=(window_info,)).start()
+        threading.Thread(target=save_new_app, args=(window_info,)).start()
     window_info['timestamp'] = int(time.time())
     # add new record to batch
     batch_records.append(window_info)
@@ -66,13 +62,6 @@ def record_active_window() -> None:
             add_record(record['app_name'], record['exe_path'], record['timestamp'])
         batch_records = []
 
-
-def log(e: Exception) -> None:
-    # create file if not exist
-    os.makedirs(os.path.dirname(ERROR_LOG_PATH), exist_ok=True)
-    # save to log file
-    with open(ERROR_LOG_PATH, 'a') as f:
-        f.write(f'{datetime.now()}: {e}\n')
 
 if __name__ == '__main__':
     last_recorded = time.time()

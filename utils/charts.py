@@ -7,7 +7,7 @@ from typing import Literal
 THEME = Literal['light', 'dark']
 
 
-def create_app_usage_figure(theme: THEME, app_usage_df: pd.DataFrame) -> str:
+def create_app_usage_figure(theme: THEME, app_usage_df: pd.DataFrame, icons_dir_url: str) -> str:
     # Create the bar chart
     fig = go.Figure()
     fig.add_trace(go.Bar(
@@ -26,7 +26,7 @@ def create_app_usage_figure(theme: THEME, app_usage_df: pd.DataFrame) -> str:
     for index, row in app_usage_df.iterrows():
         fig.add_layout_image(
             dict(
-                source=f'/Icons/{row["app_name"]}.ico',
+                source=f'/{icons_dir_url}/{row["app_name"]}.ico',
                 xref="paper", yref="y",
                 x=-0.1, y=row['app_name'],
                 sizex=icon_size, sizey=icon_size,

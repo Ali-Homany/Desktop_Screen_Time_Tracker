@@ -1,7 +1,6 @@
-from flask import Blueprint, send_from_directory, request, jsonify, render_template, session
+from flask import Blueprint, request, jsonify, render_template, session
 from utils.summarizer import get_unique_days, get_usage_by_apps, get_daily_usage
 from utils.charts import create_app_usage_figure, create_daily_usage_figure, create_total_usage_graph, aggregate_data
-import os
 
 
 home = Blueprint('home', __name__)
@@ -12,14 +11,6 @@ home = Blueprint('home', __name__)
 def index():
     # Render the index page with the empty graph initially
     return render_template('index.html')
-
-
-# Serve files from the 'Icons' folder
-icons_dir = os.path.join(os.path.expanduser('~'), 'Documents', 'Screen_Time_Tracker', 'Icons')
-os.makedirs(icons_dir, exist_ok=True)
-@home.route('/Icons/<path:filename>')
-def serve_icon(filename):
-    return send_from_directory(icons_dir, filename)
 
 
 unique_days = get_unique_days()
@@ -43,7 +34,7 @@ def update_app_usage_graph():
         return jsonify({'appUsageJSON': None, 'message': 'No usage data available for this day.'})
 
     # Create graphs
-    app_usage_json = create_app_usage_figure(session.get('settings').get('theme'), app_usage_df)
+    app_usage_json = create_app_usage_figure(session.get('settings').get('theme'), app_usage_df, icons_dir_url='Icons')
     total_hours = app_usage_df['usage'].sum() / 60
     total_hours_graph_json = create_total_usage_graph(theme=session.get('settings').get('theme'), total_hours=total_hours, daily_goal=session.get('settings').get('daily_goal'))
 

@@ -1,18 +1,22 @@
-from flask import Blueprint, send_from_directory, request, jsonify, render_template, session
+from flask import Blueprint, request, jsonify, render_template, session
 from utils.summarizer import get_unique_days, get_usage_by_websites, get_daily_browser_usage
 from utils.charts import create_app_usage_figure, create_daily_usage_figure, aggregate_data
-
+import requests
 
 browser = Blueprint('browser', __name__)
 
 # Route for the browser page
 @browser.route('/browser', methods=['GET'])
 def index():
+    try:
+        is_extension_active = requests.get('http://localhost:8049/check_extension', timeout=.5).json()['is_extension_active']
+    except:
+        is_extension_active = False
     # Render the browser page with the empty graph initially
-    return render_template('browser.html')
+    return render_template('browser.html', is_extension_active=is_extension_active)
 
 
-unique_days = get_unique_days()
+unique_days = get_unique_days(for_browser=True)
 # Route for updating the app usage graph
 @browser.route('/browser/get-app-usage', methods=['GET'])
 def update_app_usage_graph():
@@ -33,10 +37,10 @@ def update_app_usage_graph():
         return jsonify({'appUsageJSON': None, 'message': 'No usage data available for this day.'})
 
     # Create graphs
-    app_usage_json = create_app_usage_figure(session.get('settings').get('theme'), website_usage_df)
+    app_usage_json = create_app_usage_figure(session.get('settings').get('theme'), website_usage_df, icons_dir_url='Websites_Icons')
+    total_hours = website_usage_df['usage'].sum() / 60
 
-    return jsonify({'graphJSON': app_usage_json, 'selectedDate': selected_date})
-
+    return jsonify({'graphJSON': app_usage_json, 'dayHours': total_hours, 'selectedDate': selected_date})
 
 # Route for updating the daily usage graph
 @browser.route('/browser/get-daily-usage', methods=['GET'])

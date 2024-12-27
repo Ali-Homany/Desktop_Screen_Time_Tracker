@@ -71,9 +71,12 @@ def get_denormalized_records() -> pd.DataFrame:
     session.close()
     return result
 
-def get_unique_days() -> list:
+def get_unique_days(for_browser: bool=False) -> list:
     session = create_db()
-    query = session.query(func.distinct(func.date(HourlyRecords.datetime))).order_by(func.date(HourlyRecords.datetime).asc())
+    if for_browser:
+        query = session.query(func.distinct(func.date(HourlyBrowserRecords.datetime))).order_by(func.date(HourlyBrowserRecords.datetime).asc())
+    else:
+        query = session.query(func.distinct(func.date(HourlyRecords.datetime))).order_by(func.date(HourlyRecords.datetime).asc())
     result = [date[0] for date in query.all()]
     session.close()
     return result

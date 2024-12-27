@@ -21,7 +21,6 @@ class App(PrintableBase):
     id = Column(Integer, primary_key=True)
     app_name = Column(String, unique=True)
     file_location = Column(String, nullable=False)
-    icon_location = Column(String, nullable=True)
 
 class Website(PrintableBase):
     __tablename__ = 'Websites'
@@ -84,11 +83,17 @@ def get_all_apps_names() -> list[str]:
     apps = session.query(App).all()
     session.close()
     return [app.app_name for app in apps]
+def get_all_websites_names() -> list[str]:
+    session = create_db()
+    websites = session.query(Website).all()
+    session.close()
+    return [website.domain_name for website in websites]
 def get_last_browser_tab() -> str:
     session = create_db()
-    record = session.query(BrowserRecord).order_by(BrowserRecord.timestamp.desc()).first()
+    record = session.query(BrowserRecord).join(Website, Website.id == BrowserRecord.website_id).order_by(BrowserRecord.timestamp.desc()).first()
+    last_browser_tab = record.website.domain_name if record else None
     session.close()
-    return record.domain_name if record else None
+    return last_browser_tab
 
 def add_record(app_name: str, app_path: str, timestamp: int) -> None:
     # Create a database session
@@ -119,14 +124,20 @@ def add_browser_record(domain_name: str, timestamp: int) -> None:
     session.commit()
     session.close()
 
-def update_app_icon(app_name: str, icon_path: str, file_location: str='') -> None:
+def add_app(app_name: str, file_location: str='') -> None:
     session = create_db()
     app = session.query(App).filter_by(app_name=app_name).first()
     if not app:
-        app = App(app_name=app_name, icon_location=icon_path, file_location=file_location or 'Unknown')
+        app = App(app_name=app_name, file_location=file_location or 'Unknown')
         session.add(app)
-    elif icon_path and icon_path != 'Unknown' and os.path.exists(icon_path):
-        app.icon_location = icon_path
+    session.commit()
+    session.close()
+def add_website(website_name: str) -> None:
+    session = create_db()
+    website = session.query(Website).filter_by(domain_name=website_name).first()
+    if not website:
+        website = Website(domain_name=website_name)
+        session.add(website)
     session.commit()
     session.close()
 
