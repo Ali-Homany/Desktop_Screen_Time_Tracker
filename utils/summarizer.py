@@ -10,6 +10,11 @@ from utils.db import (
 from sqlalchemy import func
 
 
+"""
+This module provides functions to transform and summarize data from the database using pandas and sqlalchemy.
+"""
+
+
 def seconds_to_time(seconds: int) -> str:
     """
     Convert seconds to hours, minutes, and seconds

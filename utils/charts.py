@@ -2,8 +2,14 @@ import plotly.graph_objects as go
 from plotly.utils import PlotlyJSONEncoder
 import pandas as pd
 import json
-
 from typing import Literal
+
+
+"""
+This module contains functions to create various charts and graphs using Plotly, given necessary data and theme.
+"""
+
+
 THEME = Literal['light', 'dark']
 
 

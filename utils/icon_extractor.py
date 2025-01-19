@@ -6,6 +6,11 @@ import svgwrite
 import requests
 
 
+"""
+This module is responsible for extracting icons from executable files or website URLs, and saving them to disk.
+"""
+
+
 def extract_icon(app_name: str, exe_path: str, output_path: str) -> str:
     output_path = os.path.join(output_path, f'{app_name}.ico')
     extractor = IconExtractor(exe_path)

@@ -3,6 +3,12 @@ from utils.summarizer import get_unique_days, get_usage_by_websites, get_daily_b
 from utils.charts import create_app_usage_figure, create_daily_usage_figure, aggregate_data
 import requests
 
+
+"""
+This module contains routes and functions for the browser page, which displays the browser time usage.
+"""
+
+
 browser = Blueprint('browser', __name__)
 
 # Route for the browser page

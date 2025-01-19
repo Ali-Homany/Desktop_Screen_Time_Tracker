@@ -2,6 +2,11 @@ import os
 from datetime import datetime
 
 
+"""
+This module is responsible for logging errors to a file.
+"""
+
+
 # Error log directory in AppData\Roaming
 appdata_dir = os.path.join(os.getenv('APPDATA'), 'Screen_Time_Tracker')
 os.makedirs(appdata_dir, exist_ok=True)

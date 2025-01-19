@@ -5,7 +5,13 @@ from app.settings import settings as settings_blueprint
 from app.browser import browser as browser_blueprint
 
 
+"""
+This is the frontend of the webapp.
+"""
+
+
 def create_app(config: dict) -> Flask:
+    # create an instance of the Flask class
     app = Flask(
         __name__, 
         template_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates'),
@@ -27,11 +33,12 @@ def create_app(config: dict) -> Flask:
 
 
     app.secret_key = os.urandom(24)
-
+    # register the blueprints (each blueprint is responsible for a route)
     app.register_blueprint(home_blueprint)
     app.register_blueprint(settings_blueprint)
     app.register_blueprint(browser_blueprint)
     
+    # load user preferences to the session
     @app.before_request
     def load_user_preferences():
         session['settings'] = config

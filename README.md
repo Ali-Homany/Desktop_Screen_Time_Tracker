@@ -146,7 +146,7 @@ In order to re-create the Installer executable from the code yourself, kindly fo
 
 <br>
 
-However, if you're more curious or you don't want to run an installer, you might continue the steps below:
+However, if you're more curious or you don't want to run an installer (step 4), you might continue the steps below:
 
 5. Create shortcuts for the recorder.exe, browser_recorder.exe and main.exe
 

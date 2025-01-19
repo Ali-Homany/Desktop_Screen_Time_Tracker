@@ -4,6 +4,11 @@ import os
 import json
 
 
+"""
+This module contains routes and functions for the settings page, which allows the user to export their data and change preferences.
+"""
+
+
 settings = Blueprint('settings', __name__)
 
 # Route for the settings page

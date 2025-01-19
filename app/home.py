@@ -3,6 +3,11 @@ from utils.summarizer import get_unique_days, get_usage_by_apps, get_daily_usage
 from utils.charts import create_app_usage_figure, create_daily_usage_figure, create_total_usage_graph, aggregate_data
 
 
+"""
+This module contains routes and functions for the home page, which displays the app usage and daily usage graphs.
+"""
+
+
 home = Blueprint('home', __name__)
 
 

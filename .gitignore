@@ -1,6 +1,7 @@
 # scripts
 script.py
 temp.py
+deploy/release*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

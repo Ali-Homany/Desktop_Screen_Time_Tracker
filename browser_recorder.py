@@ -10,6 +10,11 @@ from utils.logger import log
 import waitress
 
 
+"""
+This module is responsible for recording the user's activity on the browser, by receiving requests from the chrome extension.
+"""
+
+
 PORT = 8049
 is_extension_active = False
 app = Flask(__name__)
@@ -36,10 +41,13 @@ def run_server() -> None:
     waitress.serve(app, host='127.0.0.1', port=PORT)
 
 
+# curr domain/url represent the last active browser tab (which is saved to db)
 curr_domain_name = get_last_browser_tab() or 'BLANK'
 curr_url = ''
+# batch size represents number of records to be inserted into the database at once
 batch_size = 30
 batch_records = []
+# unique websites names helps identify new websites
 unique_websites_names = set(get_all_websites_names())
 # icons path
 websites_icons_dir = os.path.join(os.path.expanduser('~'), 'Documents', 'Screen_Time_Tracker', 'Websites_Icons')
@@ -48,8 +56,12 @@ os.makedirs(websites_icons_dir, exist_ok=True)
 
 def extract_domain_name(url: str) -> str:
     return tldextract.extract(url).domain
+
+
 def extract_base_url(url: str) -> str:
     return urlparse(url).netloc
+
+
 def save_new_website(url: str, domain_name: str) -> bool:
     try:
         extract_website_icon(website_url=url, website_name=domain_name, output_path=websites_icons_dir)

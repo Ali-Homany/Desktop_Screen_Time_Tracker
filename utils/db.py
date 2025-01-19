@@ -5,6 +5,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from pandas import DataFrame
 from datetime import datetime
 
+
+"""
+This module is responsible for interacting with the database, including creating tables, inserting data, and querying data.
+"""
+
+
 # DB file directory in Documents
 documents_dir = os.path.join(os.path.expanduser('~'), 'Documents', 'Screen_Time_Tracker')
 os.makedirs(documents_dir, exist_ok=True)

@@ -8,6 +8,11 @@ from utils.db import add_record, get_all_apps_names, add_app
 from utils.icon_extractor import extract_icon
 from utils.logger import log
 
+"""This module is responsible for recording the user's activity on the computer.
+It uses the Windows API to get the current active window and its process information.
+The process information is then used to determine the application name and icon.
+Data then is sent to the database.
+"""
 
 # icons path
 icons_dir = os.path.join(os.path.expanduser('~'), 'Documents', 'Screen_Time_Tracker', 'Icons')
@@ -21,6 +26,7 @@ def get_active_window_info() -> dict:
         _, pid = win32process.GetWindowThreadProcessId(hwnd)
         for process in c.Win32_Process(ProcessId=pid):
             if not process:
+                # In case the process is not found, return default value
                 return {'title': 'Unknown', 'app_name': 'Unknown', 'exe_path': 'Unknown'}
             app_name = process.Name.replace('.exe', '').capitalize()
             if process.Name.lower() == 'code.exe':
@@ -42,8 +48,10 @@ def save_new_app(app_info: dict) -> None:
         log(f"Error extracting icon: {e}")
 
 
+# batch size represents number of records to be inserted into the database at once
 batch_size = 30
 batch_records = []
+# unique apps names helps identify new apps
 unique_apps_names = set(get_all_apps_names())
 
 def record_active_window() -> None:
