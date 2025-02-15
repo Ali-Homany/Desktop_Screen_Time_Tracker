@@ -42,7 +42,7 @@ def seconds_to_time(seconds: int) -> str:
     return f'{hours}hrs {minutes}mins {seconds}secs'
 
 
-def get_usage_by_apps(date: datetime.date) -> pd.DataFrame:
+def get_usage_by_apps(date: datetime.date, n_top: int=5) -> pd.DataFrame:
     """
     Get the usage counts for all apps at a given date
     Args:
@@ -67,7 +67,8 @@ def get_usage_by_apps(date: datetime.date) -> pd.DataFrame:
     app_counts = pd.DataFrame(results, columns=['app_name', 'usage'])
     app_counts['usage'] = app_counts['usage'] / 60  # timestamp is in seconds
     # filter top apps
-    return filter_top(app_counts, 5)
+    return filter_top(app_counts, n_top)
+
 
 def get_denormalized_records() -> pd.DataFrame:
     session = create_db()
@@ -75,6 +76,7 @@ def get_denormalized_records() -> pd.DataFrame:
     result = pd.read_sql(query.statement, session.bind)
     session.close()
     return result
+
 
 def get_unique_days(for_browser: bool=False) -> list:
     session = create_db()
@@ -102,21 +104,26 @@ def get_daily_usage() -> pd.DataFrame:
     session.close()
     return result
 
-def filter_top(df: pd.DataFrame, n_top: int) -> pd.DataFrame:
+
+def filter_top(df: pd.DataFrame, n_top: int, add_other: bool=True) -> pd.DataFrame:
     if len(df) <= n_top:
         return df
-    # assuming ordered by usage in ascending order
-    top_websites = df.tail(n_top).reset_index(drop=True)
-    # add others row
+    if 'domain_name' in df.columns:
+        df = df.rename(columns={'domain_name': 'app_name'})
     # assuming df has app_name and usage columns
-    other_apps = pd.DataFrame({
-        'app_name': ['Other'],
-        'usage': [df['usage'].sum() - top_websites['usage'].sum()]
-    })
-    top_websites = pd.concat([other_apps, top_websites], ignore_index=True)
+    df.sort_values(by='usage', ascending=False, inplace=True)
+    top_websites = df.head(n_top).reset_index(drop=True)
+    # add others row
+    if add_other:
+        other_apps = pd.DataFrame({
+            'app_name': ['Other'],
+            'usage': [df['usage'].sum() - top_websites['usage'].sum()]
+        })
+        top_websites = pd.concat([other_apps, top_websites], ignore_index=True)
     return top_websites
 
-def get_usage_by_websites(date: datetime.date) -> pd.DataFrame:
+
+def get_usage_by_websites(date: datetime.date, n_top: int=5) -> pd.DataFrame:
     """
     Get the usage counts for all websites at a given date
     Args:
@@ -141,7 +148,8 @@ def get_usage_by_websites(date: datetime.date) -> pd.DataFrame:
     website_counts = pd.DataFrame(results, columns=['app_name', 'usage'])
     website_counts['usage'] = website_counts['usage'] / 60  # timestamp is in seconds
     # filter top websites
-    return filter_top(website_counts, 5)
+    return filter_top(website_counts, n_top)
+
 
 def get_daily_browser_usage() -> pd.DataFrame:
     session = create_db()
@@ -156,6 +164,48 @@ def get_daily_browser_usage() -> pd.DataFrame:
     # Convert 'date' to datetime and 'usage' to minutes
     result['date'] = pd.to_datetime(result['date'])
     session.close()
+    return result
+
+
+def get_week_data(date: datetime.date=None) -> pd.DataFrame:
+    session = create_db()
+    if date is None:
+        date = datetime.date.today()
+    query = session.query(
+        func.date(HourlyRecords.datetime).label('date'),
+        App.app_name,
+        func.sum(HourlyRecords.duration).label('usage')
+    ).join(
+        App
+    ).filter(
+        func.date(HourlyRecords.datetime) <= date,
+        func.date(HourlyRecords.datetime) >= date - datetime.timedelta(days=6)
+    ).group_by(
+        func.date(HourlyRecords.datetime),
+        App.app_name
+    ).order_by(func.date(HourlyRecords.datetime))
+    result = pd.read_sql(query.statement, session.bind)
+    return result
+
+
+def get_browser_week_data(date: datetime.date=None) -> pd.DataFrame:
+    session = create_db()
+    if date is None:
+        date = datetime.date.today()
+    query = session.query(
+        func.date(HourlyBrowserRecords.datetime).label('date'),
+        Website.domain_name,
+        func.sum(HourlyBrowserRecords.duration).label('usage')
+    ).join(
+        Website
+    ).filter(
+        func.date(HourlyBrowserRecords.datetime) <= date,
+        func.date(HourlyBrowserRecords.datetime) >= date - datetime.timedelta(days=6)
+    ).group_by(
+        func.date(HourlyBrowserRecords.datetime),
+        Website.domain_name
+    ).order_by(func.date(HourlyBrowserRecords.datetime))
+    result = pd.read_sql(query.statement, session.bind)
     return result
 
 

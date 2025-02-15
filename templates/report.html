@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='common_light.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='report_light.css') }}">
+    {% if session.get('settings').get('theme') == 'dark' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='common_dark.css') }}">
+    {% endif %}
+    <title>Weekly ScreenTime Report</title>
+</head>
+<body>
+    <svg id="home" aria-hidden="true" data-prefix="far" data-icon="home" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="svg-inline--fa fa-home fa-w-18 fa-7x"><path d="M557.1 240.7L512 203.8V104c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8v60.5L313.4 41.1c-14.7-12.1-36-12.1-50.7 0L18.9 240.7c-3.4 2.8-3.9 7.8-1.1 11.3l20.3 24.8c2.8 3.4 7.8 3.9 11.3 1.1l14.7-12V464c0 8.8 7.2 16 16 16h168c4.4 0 8-3.6 8-8V344h64v128c0 4.4 3.6 8 8 8h168c8.8 0 16-7.2 16-16V265.8l14.7 12c3.4 2.8 8.5 2.3 11.3-1.1l20.3-24.8c2.6-3.4 2.1-8.4-1.3-11.2zM464 432h-96V304c0-4.4-3.6-8-8-8H216c-4.4 0-8 3.6-8 8v128h-96V226.5l170.9-140c2.9-2.4 7.2-2.4 10.1 0l170.9 140V432z" class=""></path></svg>
+    <h1>Weekly ScreenTime Report</h1>
+    <div id="goals_achieved">{{ goals_achieved }}</div>
+    
+    <div id="report">
+        <div id="daily-usage-chart">
+            <!-- Plotly daily usage graph will be rendered here -->
+        </div>
+        <div id="tops">
+            <h2>Top 3 Apps</h2>
+            <div id="top_apps">
+                <!-- Apps icons and names to be rendered here -->
+            </div>
+            <h2>Top 3 Websites</h2>
+            <div id="top_websites">
+                <!-- Apps icons and names to be rendered here -->
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        function fetchReport() {
+            fetch(`/get-report`)
+            .then(response => response.json())
+            .then(data => {
+                // update daily usage graph
+                var graph = JSON.parse(data.graphJSON)
+                Plotly.newPlot('daily-usage-chart', graph.data, graph.layout, {'displayModeBar': false});
+                // update goals achieved
+                var goalsDiv = document.getElementById('goals_achieved');
+                goalsDiv.innerHTML = "Goals Achieved: " + data.nDaysSuccessful;
+                // renders top apps
+                var topAppsDiv = document.getElementById('top_apps');
+                topAppsDiv.innerHTML = '';
+                data.topApps.forEach(app => {
+                    var appDiv = document.createElement('div');
+                    appDiv.className = 'app';
+                    var appImage = document.createElement('img');
+                    appImage.src = `/Icons/${app}.ico`;
+                    appImage.alt = 'App Icon'
+                    var appName = document.createElement('p');
+                    appName.innerHTML = app;
+                    appDiv.appendChild(appImage);
+                    appDiv.appendChild(appName);
+                    topAppsDiv.appendChild(appDiv);
+                });
+                // renders top websites
+                var topWebsitesDiv = document.getElementById('top_websites');
+                // fetch websites images
+                var topWebsitesDiv = document.getElementById('top_websites');
+                topWebsitesDiv.innerHTML = '';
+                data.topWebsites.forEach(website => {
+                    var websiteDiv = document.createElement('div');
+                    websiteDiv.className = 'app';
+                    var websiteImage = document.createElement('img');
+                    websiteImage.src = `/Websites_Icons/${website}.ico`;
+                    websiteImage.alt = 'Website Icon'
+                    var websiteName = document.createElement('p');
+                    websiteName.innerHTML = website;
+                    websiteDiv.appendChild(websiteImage);
+                    websiteDiv.appendChild(websiteName);
+                    topWebsitesDiv.appendChild(websiteDiv);
+                });
+                
+            })
+            .catch(error => console.error('Error updating app usage graph:', error));
+        }
+        window.onload = () => {
+            fetchReport();
+        }
+    </script>
+    <script>
+        // redirect to index page on back arrow click
+        document.getElementById('home').addEventListener('click', function() {
+            window.location.href = '/';
+        });
+    </script>
+</body>
+</html>

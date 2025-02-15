@@ -3,6 +3,7 @@ from flask import Flask, session, send_from_directory
 from app.home import home as home_blueprint
 from app.settings import settings as settings_blueprint
 from app.browser import browser as browser_blueprint
+from app.report import report as report_blueprint
 
 
 """
@@ -37,6 +38,7 @@ def create_app(config: dict) -> Flask:
     app.register_blueprint(home_blueprint)
     app.register_blueprint(settings_blueprint)
     app.register_blueprint(browser_blueprint)
+    app.register_blueprint(report_blueprint)
     
     # load user preferences to the session
     @app.before_request

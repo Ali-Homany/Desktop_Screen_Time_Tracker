@@ -1,4 +1,4 @@
-a#tag {
+a#tag, a#report {
     position: absolute;
     top: 70px;
     left: 80px;
@@ -7,8 +7,11 @@ a#tag {
     padding: 10px 20px;
     border-radius: 25px;
 }
-a#tag:hover {
+a#tag:hover, a#report:hover {
     background-color: #543f9f;
+}
+a#report {
+    position: static;
 }
 
 a#settings {
@@ -32,6 +35,15 @@ a#settings svg:hover {
     color: var(--red);
 }
 
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+    width: 100%;
+    gap: 20px;
+}
 /* forms styling */
 form {
     display: inline-block;

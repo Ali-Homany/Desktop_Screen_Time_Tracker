@@ -42,3 +42,7 @@ a {
 a:visited {
     color: inherit;
 }
+
+.yaxislayer-above g text {
+    text-transform: capitalize;
+}

@@ -24,7 +24,12 @@ def get_active_window_info() -> dict:
     try:
         hwnd = win32gui.GetForegroundWindow()
         _, pid = win32process.GetWindowThreadProcessId(hwnd)
-        for process in c.Win32_Process(ProcessId=pid):
+        try:
+            processes = c.Win32_Process(ProcessId=pid)  # <-- Catch error here
+        except wmi.x_wmi as wmi_error:
+            # raise RuntimeError("Failed to get processes due to windows error")
+            return {'title': 'Unknown', 'app_name': 'Unknown', 'exe_path': 'Unknown'}
+        for process in processes:
             if not process:
                 # In case the process is not found, return default value
                 return {'title': 'Unknown', 'app_name': 'Unknown', 'exe_path': 'Unknown'}

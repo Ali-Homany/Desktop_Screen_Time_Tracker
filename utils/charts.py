@@ -114,27 +114,38 @@ def create_total_usage_graph(theme: THEME, total_hours: float, daily_goal: float
 def aggregate_data(df: pd.DataFrame, level: str) -> pd.DataFrame:
     """Aggregate data and format the date column based on the given aggregation level"""
     if df.empty:
-        return pd.DataFrame(columns=['formatted_date', 'usage'])
+        return pd.DataFrame(columns=['date', 'usage'])
     if level == 'Daily':
-        df['formatted_date'] = df['date'].dt.strftime('%Y-%m-%d')
+        df['date'] = df['date'].dt.strftime('%Y-%m-%d')
     elif level == 'Monthly':
         df = df.resample('ME', on='date').sum().reset_index()
-        df['formatted_date'] = df['date'].dt.strftime('%Y-%m')
+        df['date'] = df['date'].dt.strftime('%Y-%m')
     elif level == 'Yearly':
         df = df.resample('YE', on='date').sum().reset_index()
-        df['formatted_date'] = df['date'].dt.strftime('%Y')
+        df['date'] = df['date'].dt.strftime('%Y')
     else:
         print('Incorrect level given')
-        return pd.DataFrame(columns=['formatted_date', 'usage'])
+        return pd.DataFrame(columns=['date', 'usage'])
     return df
 
 
-def create_daily_usage_figure(theme: THEME, aggregated_df: pd.DataFrame, selected_level: str) -> str:
+def create_daily_usage_figure(
+        theme: THEME,
+        aggregated_df: pd.DataFrame,
+        selected_level: str,
+        show_average: bool=False,
+        goal: float=None
+    ) -> str:
     # Create a bar chart for the daily usage
+    if goal:
+        colors = ['#daa520' if usage > goal else '#6f54d3' for usage in aggregated_df['usage']]
+    else:
+        colors = '#6f54d3'
     fig = go.Figure(data=[
         go.Bar(
-            x=aggregated_df['formatted_date'],
+            x=aggregated_df['date'],
             y=aggregated_df['usage'] // 3600,
+            marker_color=colors
         )
     ])
     fig.update_layout(
@@ -150,5 +161,16 @@ def create_daily_usage_figure(theme: THEME, aggregated_df: pd.DataFrame, selecte
         plot_bgcolor= "rgba(0, 0, 0, 0)",
         paper_bgcolor= "rgba(0, 0, 0, 0)",
     )
+    # add avg line if required
+    if show_average:
+        avg_usage = round(aggregated_df['usage'].mean() / 3600, 2)
+        fig.add_hline(
+            y=avg_usage,
+            line_width=2,
+            line_dash='dash',
+            line_color='red',
+            annotation_text=f'Average: {avg_usage} hrs',
+            annotation_position='top right'
+        )
     fig_json = json.dumps(fig, cls=PlotlyJSONEncoder)
     return fig_json
