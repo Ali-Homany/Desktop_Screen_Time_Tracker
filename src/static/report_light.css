@@ -13,6 +13,9 @@ svg#home:hover {
     background-color: rgba(104, 99, 137, 0.5);
 }
 /* header */
+h1 {
+    margin-bottom: 60px;
+}
 .header * {
     margin: 0;
     vertical-align: middle;

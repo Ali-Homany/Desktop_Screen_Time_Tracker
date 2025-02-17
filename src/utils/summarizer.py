@@ -167,10 +167,10 @@ def get_daily_browser_usage() -> pd.DataFrame:
     return result
 
 
-def get_week_data(date: datetime.date=None) -> pd.DataFrame:
+def get_usage_todate(start_date: datetime.date=None) -> pd.DataFrame:
     session = create_db()
-    if date is None:
-        date = datetime.date.today()
+    if start_date is None:
+        start_date = datetime.date.min
     query = session.query(
         func.date(HourlyRecords.datetime).label('date'),
         App.app_name,
@@ -178,8 +178,7 @@ def get_week_data(date: datetime.date=None) -> pd.DataFrame:
     ).join(
         App
     ).filter(
-        func.date(HourlyRecords.datetime) <= date,
-        func.date(HourlyRecords.datetime) >= date - datetime.timedelta(days=6)
+        func.date(HourlyRecords.datetime) >= start_date
     ).group_by(
         func.date(HourlyRecords.datetime),
         App.app_name
@@ -188,10 +187,10 @@ def get_week_data(date: datetime.date=None) -> pd.DataFrame:
     return result
 
 
-def get_browser_week_data(date: datetime.date=None) -> pd.DataFrame:
+def get_browser_usage_todate(start_date: datetime.date=None) -> pd.DataFrame:
     session = create_db()
-    if date is None:
-        date = datetime.date.today()
+    if start_date is None:
+        start_date = datetime.date.min
     query = session.query(
         func.date(HourlyBrowserRecords.datetime).label('date'),
         Website.domain_name,
@@ -199,8 +198,7 @@ def get_browser_week_data(date: datetime.date=None) -> pd.DataFrame:
     ).join(
         Website
     ).filter(
-        func.date(HourlyBrowserRecords.datetime) <= date,
-        func.date(HourlyBrowserRecords.datetime) >= date - datetime.timedelta(days=6)
+        func.date(HourlyBrowserRecords.datetime) >= start_date
     ).group_by(
         func.date(HourlyBrowserRecords.datetime),
         Website.domain_name
