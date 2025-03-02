@@ -1,32 +1,58 @@
-a#tag, a#report {
-    position: absolute;
-    top: 70px;
-    left: 80px;
+/* nav menu */
+#nav-menu {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: right;
+    gap: 5px;
+    width: fit-content;
+    padding: 10px;
     background-color: var(--purple);
-    color: var(--white);
-    padding: 10px 20px;
-    border-radius: 25px;
-}
-a#tag:hover, a#report:hover {
-    background-color: #543f9f;
-}
-a#report {
-    position: static;
-}
-
-a#settings {
+    border-radius: 20px;
     position: absolute;
-    top: 70px;
-    right: 80px;
+    top: -250px;
+    right: 60px;
+    z-index: 1;
+    transition: 1s;
 }
-a#settings svg{
-    fill: var(--purple);
-    width: 30px;
+#nav-menu a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.5s ease;
+}
+#nav-menu a:hover {
+    background-color: #464db1;
+}
+#nav-menu svg {
+    fill: var(--white);
+    width: 20px;
     aspect-ratio: 1/1;
 }
-a#settings svg:hover {
-    fill: #543f9f;
+#nav-menu-toggler {
+    position: absolute;
+    top: 65px;
+    right: 80px;
+    width: 40px;
+    aspect-ratio: 1/1;
+    fill: var(--white);
+    padding: 50px;
+    padding-top: 0;
+    cursor: pointer;
 }
+#nav-menu-toggler:hover + #nav-menu {
+    display: flex;
+    top: 50px;
+}
+#nav-menu:hover {
+    display: flex;
+    top: 50px;
+}
+
 
 #dayHours {
     font-family: 'Solway';

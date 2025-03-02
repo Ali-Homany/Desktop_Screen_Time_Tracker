@@ -60,14 +60,14 @@ def get_usage_by_apps(date: datetime.date, n_top: int=5) -> pd.DataFrame:
         .filter(func.date(HourlyRecords.datetime) == date)
         .group_by(App.app_name)
         .having(func.sum(HourlyRecords.duration) >= 60) # filter out apps used less than 1 minute
-        .order_by(func.sum(HourlyRecords.duration).asc())
+        .order_by(func.sum(HourlyRecords.duration).desc())
     )
     results = query.all()
     session.close()
     app_counts = pd.DataFrame(results, columns=['app_name', 'usage'])
     app_counts['usage'] = app_counts['usage'] / 60  # timestamp is in seconds
     # filter top apps
-    return filter_top(app_counts, n_top)
+    return filter_top(app_counts, n_top, allow_less_than_n=True)
 
 
 def get_denormalized_records() -> pd.DataFrame:
@@ -105,11 +105,13 @@ def get_daily_usage() -> pd.DataFrame:
     return result
 
 
-def filter_top(df: pd.DataFrame, n_top: int, add_other: bool=True) -> pd.DataFrame:
-    if len(df) <= n_top:
-        return df
+def filter_top(df: pd.DataFrame, n_top: int, add_other: bool=True, allow_less_than_n: bool=False) -> pd.DataFrame:
     if 'domain_name' in df.columns:
         df = df.rename(columns={'domain_name': 'app_name'})
+    if len(df) <= n_top:
+        if allow_less_than_n:
+            return df
+        return pd.DataFrame(columns=['app_name', 'usage'])
     # assuming df has app_name and usage columns
     df.sort_values(by='usage', ascending=False, inplace=True)
     top_websites = df.head(n_top).reset_index(drop=True)
@@ -119,7 +121,7 @@ def filter_top(df: pd.DataFrame, n_top: int, add_other: bool=True) -> pd.DataFra
             'app_name': ['Other'],
             'usage': [df['usage'].sum() - top_websites['usage'].sum()]
         })
-        top_websites = pd.concat([other_apps, top_websites], ignore_index=True)
+        top_websites = pd.concat([top_websites, other_apps], ignore_index=True)
     return top_websites
 
 
@@ -140,15 +142,15 @@ def get_usage_by_websites(date: datetime.date, n_top: int=5) -> pd.DataFrame:
         .join(HourlyBrowserRecords)
         .filter(func.date(HourlyBrowserRecords.datetime) == date)
         .group_by(Website.domain_name)
-        .having(func.sum(HourlyBrowserRecords.duration) >= 60) # filter out apps used less than 1 minute
-        .order_by(func.sum(HourlyBrowserRecords.duration).asc())
+        .having(func.sum(HourlyBrowserRecords.duration) >= 60) # filter out websites used less than 1 minute
+        .order_by(func.sum(HourlyBrowserRecords.duration).desc())
     )
     results = query.all()
     session.close()
     website_counts = pd.DataFrame(results, columns=['app_name', 'usage'])
     website_counts['usage'] = website_counts['usage'] / 60  # timestamp is in seconds
     # filter top websites
-    return filter_top(website_counts, n_top)
+    return filter_top(website_counts, n_top, allow_less_than_n=True)
 
 
 def get_daily_browser_usage() -> pd.DataFrame:
@@ -205,8 +207,3 @@ def get_browser_usage_todate(start_date: datetime.date=None) -> pd.DataFrame:
     ).order_by(func.date(HourlyBrowserRecords.datetime))
     result = pd.read_sql(query.statement, session.bind)
     return result
-
-
-if __name__ == '__main__':
-    df = get_daily_usage()
-    print(df)

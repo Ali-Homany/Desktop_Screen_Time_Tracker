@@ -51,6 +51,8 @@ def create_app_usage_figure(theme: THEME, app_usage_df: pd.DataFrame, icons_dir_
         template='plotly_dark' if theme == 'dark' else 'plotly_white',
         plot_bgcolor= "rgba(0, 0, 0, 0)",
         paper_bgcolor= "rgba(0, 0, 0, 0)",
+        font=dict(family='Calibri', size=14),
+        yaxis_autorange="reversed"
     )
     fig_json = json.dumps(fig, cls=PlotlyJSONEncoder)
     return fig_json
@@ -105,6 +107,7 @@ def create_total_usage_graph(theme: THEME, total_hours: float, daily_goal: float
         template='plotly_dark' if theme == 'dark' else 'plotly_white',
         plot_bgcolor= "rgba(0, 0, 0, 0)",
         paper_bgcolor= "rgba(0, 0, 0, 0)",
+        font=dict(family='Calibri', size=14)
     )
 
     fig_json = json.dumps(fig, cls=PlotlyJSONEncoder)
@@ -160,6 +163,7 @@ def create_daily_usage_figure(
         template='plotly_dark' if theme == 'dark' else 'plotly_white',
         plot_bgcolor= "rgba(0, 0, 0, 0)",
         paper_bgcolor= "rgba(0, 0, 0, 0)",
+        font=dict(family='Calibri', size=14)
     )
     # add avg line if required
     if show_average:
