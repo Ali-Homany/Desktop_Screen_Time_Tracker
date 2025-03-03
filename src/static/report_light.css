@@ -1,16 +1,22 @@
 /* svgs */
 svg#home {
     position: absolute;
-    top: 50px;
-    left: 70px;
+    top: 45px;
+    left: 60px;
     padding: 10px;
-    width: 40px;
+    width: 50px;
     aspect-ratio: 1/1;
-    fill: var(--red);
     cursor: pointer;
 }
-svg#home:hover {
-    background-color: rgba(104, 99, 137, 0.5);
+svg#home path {
+    fill: none;
+    stroke-width: 1px;
+    stroke: var(--red);
+    transition: fill 0.5s ease;
+}
+svg#home:hover path {
+    fill: var(--red);
+    stroke-width: 2px;
 }
 /* header */
 h1 {
