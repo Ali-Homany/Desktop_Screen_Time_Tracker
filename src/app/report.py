@@ -27,9 +27,7 @@ def get_report():
     selected_level = request.args.get('level').lower()
     if not selected_level or selected_level not in ['weekly', 'monthly']:
         selected_level = 'weekly'
-    start_date = datetime.date.today() - datetime.timedelta(
-        days=7 if selected_level == 'weekly' else 30
-    )
+    start_date = datetime.date.today() - datetime.timedelta(days=7 if selected_level == 'weekly' else 30)
     # load data
     data = get_usage_todate(start_date)
     data_by_app = data.groupby('app_name').sum().reset_index()
@@ -38,16 +36,20 @@ def get_report():
         df=data_by_app,
         n_top=3,
         add_other=False
-    )['app_name'].tolist()
+    )
+    if top_apps.empty:
+        return jsonify({'graphJSON': None, 'message': f'No usage data available for this {selected_level.lower()[:-2]}.'})
+    top_apps = top_apps['app_name'].tolist()
     top_websites = filter_top(
         df=get_browser_usage_todate(start_date).groupby('domain_name').sum().reset_index(),
         n_top=3,
         add_other=False
     )
+    if top_websites.empty:
+        return jsonify({'graphJSON': None, 'message': f'No browser usage data available for this {selected_level.lower()[:-2]}.'})
     top_websites = top_websites['app_name'].tolist()
     # calculate # times goal is achieved
     goal = float(session.get('settings').get('daily_goal')) * 3600
-    n_days_successful = data[data['usage'] >= goal].shape[0]
     # create charts
     daily_chart = create_daily_usage_figure(
         theme=session.get('settings').get('theme'),
@@ -61,5 +63,4 @@ def get_report():
         graphJSON=daily_chart,
         topApps=top_apps,
         topWebsites=top_websites,
-        nDaysSuccessful=n_days_successful
     )

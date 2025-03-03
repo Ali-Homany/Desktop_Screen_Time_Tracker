@@ -7,7 +7,7 @@ from app.report import report as report_blueprint
 
 
 """
-This is the frontend of the webapp.
+This is responsible for creating the Flask application and registering the blueprints.
 """
 
 
