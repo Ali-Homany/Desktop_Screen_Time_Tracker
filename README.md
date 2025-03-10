@@ -60,14 +60,14 @@ Screenshots of the webapp:
     - ~~Add daily screen time goal (symbolic, doesn't block anything)~~
 - ~~Wrap 6th+ apps as 'Others' so app usage graph contains max of 6 apps~~
 - ~~Weekly Report~~
-- Add month option for report
+- ~~Add month option for report~~
 - Add download pdf option for report
 - Add categories pie chart (let user set categories to apps)
 - ~~Track Browser Usage:~~
     - ~~Save domains~~
     - ~~Duplicate home page but for browser screen time~~
 - Improve how db connections are made (pool or something similar)
-- Merge nav buttons (websites, settings, summary) into a foldable menu button
+- ~~Merge nav buttons (websites, settings, summary) into a menu button~~
 
 These are just some ideas to be done soon, continuously modified and many features could be added later. Don't hesitate to share any suggestions!
 

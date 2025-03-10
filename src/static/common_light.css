@@ -46,3 +46,10 @@ a:visited {
 .yaxislayer-above g text {
     text-transform: capitalize;
 }
+/* rounded bars */
+#app-usage-chart g > g > g.points > g.point {
+    clip-path: inset(0% 0% 0% 0% round 0 50px 50px 0);
+}
+#daily-usage-chart g > g > g.points > g.point {
+    clip-path: inset(0% 0% 0% 0% round 50px 50px 0 0);
+}
