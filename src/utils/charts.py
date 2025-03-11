@@ -1,19 +1,24 @@
-import plotly.graph_objects as go
-from plotly.utils import PlotlyJSONEncoder
-import pandas as pd
 import json
 from typing import Literal
+import pandas as pd
+import plotly.graph_objects as go
+from plotly.utils import PlotlyJSONEncoder
 
 
 """
-This module contains functions to create various charts and graphs using Plotly, given necessary data and theme.
+This module contains functions to create various charts and graphs using
+Plotly, given necessary data and theme.
 """
 
 
 THEME = Literal['light', 'dark']
 
 
-def create_app_usage_figure(theme: THEME, app_usage_df: pd.DataFrame, icons_dir_url: str) -> str:
+def create_app_usage_figure(
+    theme: THEME,
+    app_usage_df: pd.DataFrame,
+    icons_dir_url: str
+) -> str:
     # Create the bar chart
     fig = go.Figure()
     fig.add_trace(go.Bar(
@@ -59,7 +64,11 @@ def create_app_usage_figure(theme: THEME, app_usage_df: pd.DataFrame, icons_dir_
     return fig_json
 
 
-def create_total_usage_graph(theme: THEME, total_hours: float, daily_goal: float=None) -> str | None:
+def create_total_usage_graph(
+    theme: THEME,
+    total_hours: float,
+    daily_goal: float=None
+) -> str | None:
     if not daily_goal:
         return None
 
@@ -118,7 +127,9 @@ def create_total_usage_graph(theme: THEME, total_hours: float, daily_goal: float
 
 
 def aggregate_data(df: pd.DataFrame, level: str) -> pd.DataFrame:
-    """Aggregate data and format the date column based on the given aggregation level"""
+    """
+    Aggregate and format the date column based on the given aggregation level
+    """
     if df.empty:
         return pd.DataFrame(columns=['date', 'usage'])
     if level == 'Daily':
@@ -144,7 +155,8 @@ def create_daily_usage_figure(
     ) -> str:
     # Create a bar chart for the daily usage
     if goal:
-        colors = ['#daa520' if usage > goal else '#6f54d3' for usage in aggregated_df['usage']]
+        colors = ['#daa520' if usage > goal else '#6f54d3'
+                  for usage in aggregated_df['usage']]
     else:
         colors = '#6f54d3'
     fig = go.Figure(data=[

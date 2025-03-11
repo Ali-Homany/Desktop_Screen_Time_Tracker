@@ -32,7 +32,6 @@ def create_app(config: dict) -> Flask:
         return send_from_directory(websites_icons_dir, filename)
 
 
-
     app.secret_key = os.urandom(24)
     # register the blueprints (each blueprint is responsible for a route)
     app.register_blueprint(home_blueprint)

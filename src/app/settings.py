@@ -1,7 +1,14 @@
-from flask import Blueprint, render_template, make_response, session, url_for, redirect, request, jsonify
-from utils.summarizer import get_denormalized_records
 import os
 import json
+from flask import (
+    Blueprint,
+    render_template,
+    make_response,
+    session,
+    request,
+    jsonify
+)
+from utils.summarizer import get_denormalized_records
 
 
 """
@@ -10,6 +17,7 @@ This module contains routes and functions for the settings page, which allows th
 
 
 settings = Blueprint('settings', __name__)
+
 
 # Route for the settings page
 @settings.route('/settings', methods=['GET'])

@@ -66,7 +66,7 @@ Screenshots of the webapp:
 - ~~Track Browser Usage:~~
     - ~~Save domains~~
     - ~~Duplicate home page but for browser screen time~~
-- Improve how db connections are made (pool or something similar)
+- ~~Improve how db connections are made (pool or something similar)~~
 - ~~Merge nav buttons (websites, settings, summary) into a menu button~~
 
 These are just some ideas to be done soon, continuously modified and many features could be added later. Don't hesitate to share any suggestions!

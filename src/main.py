@@ -6,7 +6,9 @@ import threading
 import webbrowser
 import waitress
 from app import create_app
-from utils.db import is_transformation_needed, transform_new_data
+from db.db_init import init_db_engine, create_session, refresh_db
+from db.db_etl import is_transformation_needed, transform_new_data
+
 
 """
 This module serves as the main entry point for the webapp application.
@@ -14,13 +16,19 @@ It is responsible for setup, starting the webapp server, and auto-refreshing the
 """
 
 
+# Initialize the database
+engine = init_db_engine()
+db = create_session(engine)
+
+
 def auto_refresh():
     """Auto-refresh the database when needed."""
     while True:
         # revoke etl process if needed
-        time_left = is_transformation_needed()
+        time_left = is_transformation_needed(db)
         if time_left < 10:
-            transform_new_data()
+            transform_new_data(db)
+            refresh_db(engine)
         time.sleep(time_left)
 
 

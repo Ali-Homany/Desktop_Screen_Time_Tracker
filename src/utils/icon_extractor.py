@@ -7,7 +7,8 @@ import requests
 
 
 """
-This module is responsible for extracting icons from executable files or website URLs, and saving them to disk.
+This module is responsible for extracting icons from executable files or
+website URLs, and saving them to disk.
 """
 
 
@@ -35,7 +36,11 @@ def png_to_svg(png_file_path: str, svg_file_path: str):
     dwg.save()
     print(f'Saved SVG: {svg_file_path}')
 
-def extract_website_icon(website_url: str, website_name: str, output_path: str) -> str:
+def extract_website_icon(
+    website_url: str,
+    website_name: str,
+    output_path: str
+) -> str:
     print(f'Extracting icon for {website_url}')
     base_icon_url = 'https://www.google.com/s2/favicons?domain='
     icon_url = base_icon_url + website_url
