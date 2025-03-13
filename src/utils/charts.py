@@ -167,7 +167,7 @@ def create_daily_usage_figure(
         )
     ])
     fig.update_layout(
-        title=f'{selected_level} Screen Time Usage',
+        title=f'{selected_level.capitalize()} Screen Time Usage',
         xaxis_title='Date',
         yaxis_title='Usage (in hrs)',
         bargap=0.3,

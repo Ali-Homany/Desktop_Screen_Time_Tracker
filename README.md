@@ -31,7 +31,7 @@ It consists of 4 blueprints:
 - home.py: provides basic routes for the webapp
 - browser.py: provides routes for the webapp for browser time tracking
 - settings.py: provides routes for changing user preferences
-- report.py: provides routes for the weekly report
+- report.py: provides routes for the weekly/monthly report
 
 Screenshots of the webapp:
 <br>
@@ -44,34 +44,6 @@ Screenshots of the webapp:
 </p>
 <br>
 
-## To Do:
-- ~~Set default value of App Usage Graph to today~~
-- ~~Make tracking more efficient:~~
-    - ~~Use db (sqlalchemy) instead of csv~~
-    - ~~Save data in normalized form (saves alot of space instead of repeating apps names for e.g)~~
-    - ~~Insert records as batches (keep 30s in-memory) to reduce I/O~~
-    - ~~Summarize old days into hourly app usage data only (each 86,400 rows -> number of apps * 24)~~
-- ~~Add export option to export data to csv or excel~~
-- ~~Add app icons to dashboard~~
-- ~~Migrate to Flask~~
-- ~~Auto-Refresh Dashboard (auto-transform actually)~~
-- ~~Add setting page:~~
-    - ~~Add dark theme~~
-    - ~~Add daily screen time goal (symbolic, doesn't block anything)~~
-- ~~Wrap 6th+ apps as 'Others' so app usage graph contains max of 6 apps~~
-- ~~Weekly Report~~
-- ~~Add month option for report~~
-- Add download pdf option for report
-- Add categories pie chart (let user set categories to apps)
-- ~~Track Browser Usage:~~
-    - ~~Save domains~~
-    - ~~Duplicate home page but for browser screen time~~
-- ~~Improve how db connections are made (pool or something similar)~~
-- ~~Merge nav buttons (websites, settings, summary) into a menu button~~
-
-These are just some ideas to be done soon, continuously modified and many features could be added later. Don't hesitate to share any suggestions!
-
-<br>
 
 ## Usage
 For the ready-to-use application, download the executable installer from the latest release, [here](https://github.com/Ali-Homany/Desktop_Screen_Time_Tracker/releases/tag/v0.3.0). Run it and follow the instructions within the installer.

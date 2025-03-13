@@ -16,7 +16,8 @@
 </head>
 <body>
     <svg id="home" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 10L12 3L20 10L20 20H15V16C15 15.2044 14.6839 14.4413 14.1213 13.8787C13.5587 13.3161 12.7957 13 12 13C11.2044 13 10.4413 13.3161 9.87868 13.8787C9.31607 14.4413 9 15.2043 9 16V20H4L4 10Z"/><path d="M3.99999 10L12 3L20 10L20 20H15V16C15 15.2044 14.6839 14.4413 14.1213 13.8787C13.5587 13.3161 12.7956 13 12 13C11.2043 13 10.4413 13.3161 9.87868 13.8787C9.31607 14.4413 9 15.2043 9 16V20H4L3.99999 10Z"/></svg>
-    <h1>Weekly ScreenTime Report</h1>
+    <h1>ScreenTime Summary</h1>
+    <svg id="download" aria-hidden="true" data-prefix="far" data-icon="download" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="svg-inline--fa fa-download fa-w-18 fa-7x"><path d="M528 288h-92.1l46.1-46.1c30.1-30.1 8.8-81.9-33.9-81.9h-64V48c0-26.5-21.5-48-48-48h-96c-26.5 0-48 21.5-48 48v112h-64c-42.6 0-64.2 51.7-33.9 81.9l46.1 46.1H48c-26.5 0-48 21.5-48 48v128c0 26.5 21.5 48 48 48h480c26.5 0 48-21.5 48-48V336c0-26.5-21.5-48-48-48zm-400-80h112V48h96v160h112L288 368 128 208zm400 256H48V336h140.1l65.9 65.9c18.8 18.8 49.1 18.7 67.9 0l65.9-65.9H528v128zm-88-64c0-13.3 10.7-24 24-24s24 10.7 24 24-10.7 24-24 24-24-10.7-24-24z" class=""></path></svg>
     
     <form id="aggregation-form">
         <label>
@@ -115,6 +116,51 @@
         document.getElementById('home').addEventListener('click', function() {
             window.location.href = '/';
         });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+    function exportAsPDF() {
+        setTimeout(() => {
+            document.getElementById('aggregation-form').style.display = 'none';
+            const element = document.documentElement;
+            const scaleFactor = 1.5;
+            html2canvas(element, {
+                scale: scaleFactor,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: document.body.style.backgroundColor || '#000000',
+                logging: false
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png', 0.8);
+                
+                // get dimensions of page
+                const contentWidth = canvas.width / scaleFactor;
+                const contentHeight = canvas.height / scaleFactor;
+                
+                // create pdf with required dimensions
+                const pdf = new jspdf.jsPDF({
+                    orientation: contentWidth > contentHeight ? 'landscape' : 'portrait',
+                    unit: 'px',
+                    format: [contentWidth, contentHeight]
+                });
+                
+                // add image to pdf
+                pdf.addImage(imgData, 'PNG', 0, 0, contentWidth, contentHeight);
+                pdf.save("screentime-report.pdf");
+            }).catch(error => {
+                console.error("Error generating PDF:", error);
+            });
+            document.getElementById('aggregation-form').style.display = 'inline-block';
+        }, 2000);
+    }
+
+    document.getElementById('download').addEventListener('click', function() {
+        console.log("Download button clicked");
+        exportAsPDF();
+    });
     </script>
 </body>
 </html>

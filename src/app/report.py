@@ -75,7 +75,7 @@ def get_report():
     daily_chart = create_daily_usage_figure(
         theme=session.get('settings').get('theme'),
         aggregated_df=data,
-        selected_level='Daily',
+        selected_level=level,
         show_average=True,
         goal=goal
     )

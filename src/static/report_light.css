@@ -1,5 +1,5 @@
 /* svgs */
-svg#home {
+svg#home, svg#download {
     position: absolute;
     top: 45px;
     left: 60px;
@@ -7,12 +7,21 @@ svg#home {
     width: 50px;
     aspect-ratio: 1/1;
     cursor: pointer;
+    transition: .5s;
+}
+svg#download {
+    fill: var(--red);
+    right: 60px;
+    left: unset;
+}
+svg#download:hover, svg#home:hover {
+    filter: brightness(0.6);
 }
 svg#home path {
     fill: none;
     stroke-width: 1px;
     stroke: var(--red);
-    transition: fill 0.5s ease;
+    transition: 0.5s ease;
 }
 svg#home:hover path {
     fill: var(--red);
