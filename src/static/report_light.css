@@ -85,7 +85,7 @@ h1 {
     margin-bottom: 10px;
 }
 #top_apps p, #top_websites p {
-    color: var(--white);
+    color: var(--black);
     font-family: 'Solway';
     font-size: 16px;
     font-weight: 400;

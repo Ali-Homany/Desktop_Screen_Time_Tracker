@@ -8,6 +8,7 @@ from flask import (
     request,
     jsonify
 )
+from db.db_init import create_session
 from utils.summarizer import get_denormalized_records
 
 
@@ -17,6 +18,7 @@ This module contains routes and functions for the settings page, which allows th
 
 
 settings = Blueprint('settings', __name__)
+db = create_session()
 
 
 # Route for the settings page
@@ -32,7 +34,7 @@ def update_settings():
 
 @settings.route('/export-data', methods=['GET'])
 def export_data():
-    df = get_denormalized_records()
+    df = get_denormalized_records(db)
     df = df.rename(columns={'duration': 'duration (in seconds)', 'datetime': 'datetime (every hour)'})
     # Create a CSV file from the data
     csv_data = df.to_csv(index=False)

@@ -1,7 +1,3 @@
-/* general */
-:root {
-    --black: #1e1e1e;
-}
 body {
     background-color: var(--black);
     color: var(--white);

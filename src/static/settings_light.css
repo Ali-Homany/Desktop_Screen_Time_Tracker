@@ -1,32 +1,40 @@
 .settings-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: left;
     justify-content: space-evenly;
     gap: 20px;
-    width: 500px;
+    width: fit-content;
     margin: 40px auto;
     margin-top: 150px;
-    padding: 20px;
+    padding: 20px 100px;
     background-color: var(--purple);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 .settings-container .row {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
     align-items: center;
     align-content: center;
-    width: 100%;
+    width: fit-content;
     gap: 20px;
-    padding-left: 40%;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: var(--purple);
     transition: background-color 0.5s ease;
+    cursor: pointer;
 }
-.settings-container.row:hover {
-    background-color: #464db1;
+.settings-container .row:hover {
+    filter: brightness(0.8);
 }
-
+.settings-container .row:nth-child(3) {
+    cursor: unset;
+}
+.settings-container .row:nth-child(3):hover {
+    filter: none;
+}
 /* svgs */
 svg {
     padding: 10px;
@@ -34,9 +42,7 @@ svg {
     aspect-ratio: 1/1;
     fill: var(--red);
     cursor: pointer;
-}
-.settings-container svg:hover {
-    background-color: rgba(104, 99, 137, 0.5);
+    transition: .5s;
 }
 svg#home {
     width: 50px;
@@ -80,23 +86,4 @@ input[type="number"]::-webkit-outer-spin-button {
     background-color: var(--purple);
     border: 1px solid #ccc;
     vertical-align: middle;
-}
-#goal-form button[type="submit"] {
-    background-color: var(--purple);
-    color: var(--white);
-    font-weight: bold;
-    text-transform: uppercase;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-#goal-form button[type="submit"]:hover {
-    background-color: #6c5ce7;
-}
-
-#goal-form button[type="submit"]:active {
-    background-color: #5c4ecf;
 }
